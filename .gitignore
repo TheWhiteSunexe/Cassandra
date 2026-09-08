@@ -1,0 +1,23 @@
+# Système / éditeurs
+.DS_Store
+Thumbs.db
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Environnements Python
+.venv/
+venv/
+env/
+
+# Logs
+*.log
+
+# Fichiers temporaires
+*.tmp
+*.bak
+
+# Secrets / configuration locale
+.env
+.env.*
