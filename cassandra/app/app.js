@@ -74,12 +74,12 @@ function updateDate() {
 
 var eyeImages = [
 
-    "images/eyes/eyes1.png",
-    "images/eyes/eyes2.png",
-    "images/eyes/eyes3.png",
-    "images/eyes/eyes4.png",
-    "images/eyes/eyes5.png",
-    "images/eyes/eyes6.png"
+    "app/images/eyes/eyes1.png",
+    "app/images/eyes/eyes2.png",
+    "app/images/eyes/eyes3.png",
+    "app/images/eyes/eyes4.png",
+    "app/images/eyes/eyes5.png",
+    "app/images/eyes/eyes6.png"
 
 ];
 
@@ -98,18 +98,18 @@ var eyeImages = [
 
 var mouthImages = [
 
-    "images/mouth/mouth1.png",
-    "images/mouth/mouth2.png",
-    "images/mouth/mouth3.png",
-    "images/mouth/mouth4.png",
-    "images/mouth/mouth5.png",
-    "images/mouth/mouth6.png",
-    "images/mouth/mouth7.png",
-    "images/mouth/mouth8.png",
-    "images/mouth/mouth9.png",
-    "images/mouth/mouth10.png",
-    "images/mouth/mouth11.png",
-    "images/mouth/mouth12.png"
+    "app/images/mouth/mouth1.png",
+    "app/images/mouth/mouth2.png",
+    "app/images/mouth/mouth3.png",
+    "app/images/mouth/mouth4.png",
+    "app/images/mouth/mouth5.png",
+    "app/images/mouth/mouth6.png",
+    "app/images/mouth/mouth7.png",
+    "app/images/mouth/mouth8.png",
+    "app/images/mouth/mouth9.png",
+    "app/images/mouth/mouth10.png",
+    "app/images/mouth/mouth11.png",
+    "app/images/mouth/mouth12.png"
 
 ];
 
