@@ -1,5 +1,5 @@
 /* =========================================
-   CASSANDRA 2.2.0
+   CASSANDRA 2.2.1
    MOTEUR D'ANIMATION
    ========================================= */
 
@@ -138,25 +138,72 @@ var eyeImages = {
 
 
 /* =========================================
-   BOUCHE
+   BOUCHES
    ========================================= */
 
-var mouthImages = [
+/*
+    Mouth1 → Mouth12
+        Utilisées pour la parole.
 
-    "images/mouth/Mouth1.png",
-    "images/mouth/Mouth2.png",
-    "images/mouth/Mouth3.png",
-    "images/mouth/Mouth4.png",
-    "images/mouth/Mouth5.png",
-    "images/mouth/Mouth6.png",
-    "images/mouth/Mouth7.png",
-    "images/mouth/Mouth8.png",
-    "images/mouth/Mouth9.png",
-    "images/mouth/Mouth10.png",
-    "images/mouth/Mouth11.png",
-    "images/mouth/Mouth12.png"
+    EXPRESSIONS
 
-];
+    smile1 → sourire naturel
+    smile2 → sourire marqué
+    smile3 → sourire faux
+    smile4 → sourire malveillant
+
+    laugh → rire
+    kiss → baiser
+    o → bouche en O / surprise
+
+    disgust → dégoût
+    grimace → grimace
+*/
+
+var mouthImages = {
+
+    normal: [
+        "images/mouth/Mouth1.png",
+        "images/mouth/Mouth2.png",
+        "images/mouth/Mouth3.png",
+        "images/mouth/Mouth4.png",
+        "images/mouth/Mouth5.png",
+        "images/mouth/Mouth6.png",
+        "images/mouth/Mouth7.png",
+        "images/mouth/Mouth8.png",
+        "images/mouth/Mouth9.png",
+        "images/mouth/Mouth10.png",
+        "images/mouth/Mouth11.png",
+        "images/mouth/Mouth12.png"
+    ],
+
+    disgust:
+        "images/mouth/MouthDisgust.png",
+
+    grimace:
+        "images/mouth/MouthGrimace.png",
+
+    kiss:
+        "images/mouth/MouthKiss.png",
+
+    laugh:
+        "images/mouth/MouthLaugh.png",
+
+    o:
+        "images/mouth/MouthO.png",
+
+    smile1:
+        "images/mouth/MouthSmile1.png",
+
+    smile2:
+        "images/mouth/MouthSmile2.png",
+
+    smile3:
+        "images/mouth/MouthSmile3.png",
+
+    smile4:
+        "images/mouth/MouthSmile4.png"
+};
 
 
 /* =========================================
@@ -179,6 +226,24 @@ var mouthPatterns = [
 
 
 /* =========================================
+   CORPS
+   ========================================= */
+
+/*
+    Pour le moment, Cassandra possède une
+    seule image de corps.
+
+    On va simuler une respiration très légère
+    uniquement en déplaçant cette couche.
+
+    L'image elle-même n'est jamais modifiée.
+*/
+
+var bodyImage =
+    "images/body/cassandraBody.png";
+
+
+/* =========================================
    ÉLÉMENTS DOM
    ========================================= */
 
@@ -188,23 +253,17 @@ var eyes =
 var mouth =
     document.getElementById("cassandraMouth");
 
+var body =
+    document.getElementById("cassandraBody");
+
 
 /* =========================================
    PRÉCHARGEMENT
    ========================================= */
 
-/*
-    Toutes les images sont chargées une seule fois.
-
-    Cela évite que Safari tente de charger une
-    nouvelle image au moment précis où Cassandra
-    doit bouger.
-
-    Important pour le vieil iMac.
-*/
-
 var loadedEyes = {};
-var loadedMouth = [];
+var loadedMouth = {};
+var loadedBody = null;
 
 
 function preloadImage(src) {
@@ -304,18 +363,83 @@ function loadMouthImages() {
 
     var i;
 
+    loadedMouth.normal = [];
+
     for (
         i = 0;
-        i < mouthImages.length;
+        i < mouthImages.normal.length;
         i++
     ) {
 
-        loadedMouth.push(
+        loadedMouth.normal.push(
             preloadImage(
-                mouthImages[i]
+                mouthImages.normal[i]
             )
         );
     }
+
+
+    /*
+        Expressions
+    */
+
+    loadedMouth.disgust =
+        preloadImage(
+            mouthImages.disgust
+        );
+
+    loadedMouth.grimace =
+        preloadImage(
+            mouthImages.grimace
+        );
+
+    loadedMouth.kiss =
+        preloadImage(
+            mouthImages.kiss
+        );
+
+    loadedMouth.laugh =
+        preloadImage(
+            mouthImages.laugh
+        );
+
+    loadedMouth.o =
+        preloadImage(
+            mouthImages.o
+        );
+
+    loadedMouth.smile1 =
+        preloadImage(
+            mouthImages.smile1
+        );
+
+    loadedMouth.smile2 =
+        preloadImage(
+            mouthImages.smile2
+        );
+
+    loadedMouth.smile3 =
+        preloadImage(
+            mouthImages.smile3
+        );
+
+    loadedMouth.smile4 =
+        preloadImage(
+            mouthImages.smile4
+        );
+}
+
+
+/* =========================================
+   PRÉCHARGEMENT CORPS
+   ========================================= */
+
+function loadBodyImage() {
+
+    loadedBody =
+        preloadImage(
+            bodyImage
+        );
 }
 
 
@@ -353,20 +477,35 @@ function setEyeExpression(expression) {
 
 
 /* =========================================
-   BOUCHE
+   BOUCHE NORMALE
    ========================================= */
 
 function setMouth(number) {
 
     if (
         number < 1 ||
-        number > loadedMouth.length
+        number > loadedMouth.normal.length
     ) {
         return;
     }
 
     mouth.src =
-        loadedMouth[number - 1].src;
+        loadedMouth.normal[number - 1].src;
+}
+
+
+/* =========================================
+   EXPRESSION DE BOUCHE
+   ========================================= */
+
+function setMouthExpression(expression) {
+
+    if (!loadedMouth[expression]) {
+        return;
+    }
+
+    mouth.src =
+        loadedMouth[expression].src;
 }
 
 
@@ -380,20 +519,12 @@ function setMouth(number) {
     5 → 4 → 3 → 2 → 1
 
     20 ms par frame.
-
-    Aucun moteur permanent :
-    uniquement des timers pendant
-    le mouvement.
 */
 
 var blinking = false;
 
 
 function blink() {
-
-    /*
-        Évite deux clignements simultanés.
-    */
 
     if (blinking) {
         return;
@@ -430,6 +561,7 @@ function blink() {
         setNormalEyes(eyeNumber);
 
         frame++;
+
 
         if (frame < totalFrames) {
 
@@ -474,12 +606,6 @@ function scheduleBlink() {
    REGARD
    ========================================= */
 
-/*
-    Cassandra regarde dans une direction
-    pendant une durée donnée puis revient
-    au regard normal.
-*/
-
 var looking = false;
 
 
@@ -492,6 +618,7 @@ function look(direction, duration) {
     looking = true;
 
     setEyeExpression(direction);
+
 
     setTimeout(function() {
 
@@ -513,11 +640,8 @@ function scheduleLook() {
         8000 +
         Math.random() * 12000;
 
-    setTimeout(function() {
 
-        /*
-            Choix du regard
-        */
+    setTimeout(function() {
 
         var directions = [
             "left",
@@ -525,6 +649,7 @@ function scheduleLook() {
             "top",
             "bottom"
         ];
+
 
         var direction =
             directions[
@@ -534,11 +659,6 @@ function scheduleLook() {
                 )
             ];
 
-
-        /*
-            Durée aléatoire
-            entre 1.2 et 3.5 secondes
-        */
 
         var duration =
             1200 +
@@ -586,6 +706,7 @@ function speakMouth(sequence, speed) {
             return;
         }
 
+
         setMouth(
             sequence[frame]
         );
@@ -620,6 +741,7 @@ function speakRandomPattern() {
             mouthPatterns.length
         );
 
+
     speakMouth(
         mouthPatterns[index],
         70
@@ -639,7 +761,8 @@ function smile(duration) {
     if (
         expressing ||
         blinking ||
-        looking
+        looking ||
+        speaking
     ) {
         return;
     }
@@ -648,7 +771,7 @@ function smile(duration) {
 
     setEyeExpression("happy");
 
-    setMouth(5);
+    setMouthExpression("smile1");
 
 
     setTimeout(function() {
@@ -676,14 +799,6 @@ function scheduleExpression() {
 
     setTimeout(function() {
 
-        /*
-            Pour l'instant on utilise
-            uniquement le sourire.
-
-            D'autres expressions seront
-            ajoutées plus tard.
-        */
-
         var duration =
             1500 +
             Math.random() * 2500;
@@ -693,6 +808,154 @@ function scheduleExpression() {
 
 
         scheduleExpression();
+
+    }, delay);
+}
+
+
+/* =========================================
+   RESPIRATION
+   ========================================= */
+
+/*
+    Première version très simple.
+
+    Une seule image du corps est utilisée.
+
+    On déplace légèrement la couche vers le haut
+    puis vers le bas.
+
+    Le mouvement est volontairement très faible
+    pour éviter que Cassandra semble "flotter".
+*/
+
+var breathing = false;
+
+
+function setBodyPosition(offset) {
+
+    if (!body) {
+        return;
+    }
+
+    body.style.transform =
+        "translateY(" + offset + "px)";
+}
+
+
+function breathe() {
+
+    if (
+        breathing ||
+        !body
+    ) {
+        return;
+    }
+
+    breathing = true;
+
+
+    /*
+        Position normale
+    */
+
+    setBodyPosition(0);
+
+
+    /*
+        Inspiration
+    */
+
+    setTimeout(function() {
+
+        setBodyPosition(-1);
+
+    }, 250);
+
+
+    setTimeout(function() {
+
+        setBodyPosition(-2);
+
+    }, 500);
+
+
+    setTimeout(function() {
+
+        setBodyPosition(-3);
+
+    }, 750);
+
+
+    /*
+        Petite pause en inspiration
+    */
+
+    setTimeout(function() {
+
+        setBodyPosition(-3);
+
+    }, 1100);
+
+
+    /*
+        Expiration
+    */
+
+    setTimeout(function() {
+
+        setBodyPosition(-2);
+
+    }, 1400);
+
+
+    setTimeout(function() {
+
+        setBodyPosition(-1);
+
+    }, 1700);
+
+
+    setTimeout(function() {
+
+        setBodyPosition(0);
+
+    }, 2000);
+
+
+    /*
+        Fin du cycle
+    */
+
+    setTimeout(function() {
+
+        breathing = false;
+
+    }, 2100);
+}
+
+
+/* =========================================
+   RESPIRATION AUTOMATIQUE
+   ========================================= */
+
+function scheduleBreathing() {
+
+    /*
+        Une respiration toutes les
+        3 à 5 secondes environ.
+    */
+
+    var delay =
+        3000 +
+        Math.random() * 2000;
+
+
+    setTimeout(function() {
+
+        breathe();
+
+        scheduleBreathing();
 
     }, delay);
 }
@@ -833,6 +1096,7 @@ function initCassandra() {
 
     loadEyeImages();
     loadMouthImages();
+    loadBodyImage();
 
 
     /*
@@ -841,6 +1105,7 @@ function initCassandra() {
 
     setNormalEyes(1);
     setMouth(1);
+    setBodyPosition(0);
 
 
     /*
@@ -853,13 +1118,14 @@ function initCassandra() {
 
     scheduleExpression();
 
+    scheduleBreathing();
+
 
     /*
         Home Assistant
     */
 
     updateHomeAssistant();
-
 }
 
 
