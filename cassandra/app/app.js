@@ -385,3 +385,38 @@ setInterval(function() {
     updateDate();
 
 }, 60000);
+
+function updateHomeAssistant() {
+
+    var request = new XMLHttpRequest();
+
+    request.open("GET", "/api/state", true);
+
+    request.onreadystatechange = function() {
+
+        if (request.readyState === 4 &&
+            request.status === 200) {
+
+            var data = JSON.parse(request.responseText);
+
+            document.getElementById("temperature").innerHTML =
+                data.temperature + "°";
+
+            document.getElementById("weather").innerHTML =
+                data.weather;
+
+            document.getElementById("house").innerHTML =
+                data.house;
+        }
+    };
+
+    request.send();
+}
+
+updateHomeAssistant();
+
+setInterval(function() {
+
+    updateHomeAssistant();
+
+}, 10000);
