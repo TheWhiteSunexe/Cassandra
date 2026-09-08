@@ -787,7 +787,7 @@ function smile(duration) {
 
 
 /* =========================================
-   EXPRESSION ALÉATOIRE
+   EXPRESSION DE CASSANDRA
    ========================================= */
 
 function scheduleExpression() {
@@ -812,6 +812,132 @@ function scheduleExpression() {
     }, delay);
 }
 
+/* =========================================
+   SURPRISE
+   ========================================= */
+
+function surprise(duration) {
+
+    if (
+        expressing ||
+        blinking ||
+        looking ||
+        speaking
+    ) {
+        return;
+    }
+
+    expressing = true;
+
+    setEyeExpression("surprise");
+    setMouthExpression("o");
+
+
+    setTimeout(function() {
+
+        setNormalEyes(1);
+        setMouth(1);
+
+        expressing = false;
+
+    }, duration);
+}
+
+
+/* =========================================
+   FATIGUE
+   ========================================= */
+
+function fatigue(duration) {
+
+    if (
+        expressing ||
+        blinking ||
+        looking ||
+        speaking
+    ) {
+        return;
+    }
+
+    expressing = true;
+
+    setEyeExpression("tired");
+    setMouth(1);
+
+
+    setTimeout(function() {
+
+        setNormalEyes(1);
+        setMouth(1);
+
+        expressing = false;
+
+    }, duration);
+}
+
+
+/* =========================================
+   DÉGOÛT
+   ========================================= */
+
+function disgust(duration) {
+
+    if (
+        expressing ||
+        blinking ||
+        looking ||
+        speaking
+    ) {
+        return;
+    }
+
+    expressing = true;
+
+    setEyeExpression("sad");
+    setMouthExpression("disgust");
+
+
+    setTimeout(function() {
+
+        setNormalEyes(1);
+        setMouth(1);
+
+        expressing = false;
+
+    }, duration);
+}
+
+
+/* =========================================
+   SOURIRE MENAÇANT
+   ========================================= */
+
+function maliciousSmile(duration) {
+
+    if (
+        expressing ||
+        blinking ||
+        looking ||
+        speaking
+    ) {
+        return;
+    }
+
+    expressing = true;
+
+    setEyeExpression("clin");
+    setMouthExpression("smile4");
+
+
+    setTimeout(function() {
+
+        setNormalEyes(1);
+        setMouth(1);
+
+        expressing = false;
+
+    }, duration);
+}
 
 /* =========================================
    RESPIRATION
@@ -1164,3 +1290,19 @@ setInterval(
    ========================================= */
 
 initCassandra();
+
+setTimeout(function() {
+    surprise(2500);
+}, 3000);
+
+setTimeout(function() {
+    fatigue(3000);
+}, 3000);
+
+setTimeout(function() {
+    disgust(2500);
+}, 3000);
+
+setTimeout(function() {
+    maliciousSmile(3000);
+}, 3000);
