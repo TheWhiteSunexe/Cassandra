@@ -289,6 +289,12 @@ function processHomeAssistantState(data) {
             null
         );
     }
+
+    /*
+        COMPORTEMENT CASSANDRA
+    */
+    updateBehavior(data);
+    updateCassandraPresence(data);
 }
 
 

@@ -35,15 +35,16 @@ function initCassandra() {
     setMouth(1);
     setBodyPosition(0);
 
+    initMist();
+    initBehavior();
+
     scheduleBlink();
     scheduleLook();
     scheduleExpression();
     scheduleBreathing();
 
     updateHomeAssistant();
-    initMist();
 }
-
 /* =========================================
    HOME ASSISTANT
    ========================================= */
