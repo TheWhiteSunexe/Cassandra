@@ -7,6 +7,10 @@ var loadedMouth = {};
 var loadedBody = null;
 
 
+/* =========================================
+   PRÉCHARGEMENT D'UNE IMAGE
+   ========================================= */
+
 function preloadImage(src) {
 
     var image = new Image();
@@ -18,70 +22,77 @@ function preloadImage(src) {
 
 
 /* =========================================
+   PRÉCHARGEMENT D'UN TABLEAU D'IMAGES
+   ========================================= */
+
+function preloadImageArray(images) {
+
+    var loaded = [];
+
+    for (var i = 0; i < images.length; i++) {
+
+        loaded.push(
+            preloadImage(images[i])
+        );
+    }
+
+    return loaded;
+}
+
+
+/* =========================================
    PRÉCHARGEMENT DES YEUX
    ========================================= */
 
 function loadEyeImages() {
 
-    var i;
-
-    loadedEyes.normal = [];
-
-    for (
-        i = 0;
-        i < eyeImages.normal.length;
-        i++
-    ) {
-
-        loadedEyes.normal.push(
-            preloadImage(
-                eyeImages.normal[i]
-            )
+    loadedEyes.normal =
+        preloadImageArray(
+            eyeImages.normal
         );
-    }
 
     loadedEyes.bottom =
-        preloadImage(
+        preloadImageArray(
             eyeImages.bottom
         );
 
     loadedEyes.top =
-        preloadImage(
+        preloadImageArray(
             eyeImages.top
         );
 
     loadedEyes.clin =
-        preloadImage(
+        preloadImageArray(
             eyeImages.clin
         );
 
     loadedEyes.happy =
-        preloadImage(
+        preloadImageArray(
             eyeImages.happy
         );
 
     loadedEyes.left =
-        preloadImage(
+        preloadImageArray(
             eyeImages.left
         );
 
     loadedEyes.right =
-        preloadImage(
+        preloadImageArray(
             eyeImages.right
         );
 
     loadedEyes.sad =
-        preloadImage(
+        preloadImageArray(
             eyeImages.sad
         );
 
     loadedEyes.surprise =
-        preloadImage(
+        preloadImageArray(
             eyeImages.surprise
         );
 
     loadedEyes.tired =
-        preloadImage(
+        preloadImageArray(
             eyeImages.tired
         );
 }
@@ -93,22 +104,10 @@ function loadEyeImages() {
 
 function loadMouthImages() {
 
-    var i;
-
-    loadedMouth.normal = [];
-
-    for (
-        i = 0;
-        i < mouthImages.normal.length;
-        i++
-    ) {
-
-        loadedMouth.normal.push(
-            preloadImage(
-                mouthImages.normal[i]
-            )
+    loadedMouth.normal =
+        preloadImageArray(
+            mouthImages.normal
         );
-    }
 
     loadedMouth.disgust =
         preloadImage(
