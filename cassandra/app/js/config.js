@@ -259,7 +259,9 @@ var animationConfig = {
     speechFrameDuration: 70,
 
     breathingMinDelay: 3000,
-    breathingMaxDelay: 5000
+    breathingMaxDelay: 5000, 
+
+    mistFrameDuration: 80,
 };
 
 

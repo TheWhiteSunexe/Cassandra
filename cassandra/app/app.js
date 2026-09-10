@@ -41,6 +41,7 @@ function initCassandra() {
     scheduleBreathing();
 
     updateHomeAssistant();
+    initMist();
 }
 
 

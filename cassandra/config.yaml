@@ -1,5 +1,5 @@
 name: Cassandra
-version: "2.2.4"
+version: "3.0.0"
 slug: cassandra
 description: Interface Cassandra pour Home Assistant
 startup: services
