@@ -15,41 +15,55 @@
 
 <div id="screen">
 
-    <!-- BACKGROUND -->
-    <img id="background" src="images/background.png">
+    <!-- =====================================
+         BACKGROUND
+         ===================================== -->
+
+    <img
+        id="background"
+        src="images/background.png"
+        alt=""
+    >
 
 
-    <!-- CASSANDRA -->
+    <!-- =====================================
+         CASSANDRA
+         ===================================== -->
 
     <div id="cassandra">
 
         <!-- IMAGE FIXE -->
+
         <img
             id="cassandraImage"
             src="images/cassandraNormal.png"
             alt="Cassandra"
         >
 
-        <!-- YEUX ANIMÉS -->
+
+        <!-- YEUX -->
+
         <img
             id="cassandraEyes"
-            src="images/eyes/eyes1.png"
-            alt=""
-        >
-        <img
-            id="cassandraMouth"
-            src="images/mouth/mouth1.png"
+            src="images/eyes/Eyes1.png"
             alt=""
         >
 
-        <img id="mist"
-                src="images/mist/Mist9.png"
-                alt="">
+
+        <!-- BOUCHE -->
+
+        <img
+            id="cassandraMouth"
+            src="images/mouth/Mouth1.png"
+            alt=""
+        >
 
     </div>
 
 
-    <!-- LEFT INFORMATION -->
+    <!-- =====================================
+         INFORMATIONS GAUCHE
+         ===================================== -->
 
     <div id="leftInfo">
 
@@ -59,7 +73,10 @@
                 HEURE
             </div>
 
-            <div id="clock" class="value">
+            <div
+                id="clock"
+                class="value"
+            >
                 00:00
             </div>
 
@@ -72,8 +89,11 @@
                 DATE
             </div>
 
-            <div id="date" class="value small">
-                7 SEPTEMBRE
+            <div
+                id="date"
+                class="value small"
+            >
+                ----
             </div>
 
         </div>
@@ -85,8 +105,43 @@
                 TEMPÉRATURE
             </div>
 
-            <div id="temperature" class="value">
-                21.4°
+            <div
+                id="temperature"
+                class="value"
+            >
+                ----
+            </div>
+
+        </div>
+
+
+        <div class="dataBlock">
+
+            <div class="label">
+                HUMIDITÉ
+            </div>
+
+            <div
+                id="humidity"
+                class="value"
+            >
+                ----
+            </div>
+
+        </div>
+
+
+        <div class="dataBlock">
+
+            <div class="label">
+                QUALITÉ AIR
+            </div>
+
+            <div
+                id="airQuality"
+                class="value small"
+            >
+                ----
             </div>
 
         </div>
@@ -94,8 +149,9 @@
     </div>
 
 
-
-    <!-- RIGHT INFORMATION -->
+    <!-- =====================================
+         INFORMATIONS DROITE
+         ===================================== -->
 
     <div id="rightInfo">
 
@@ -105,8 +161,11 @@
                 MÉTÉO
             </div>
 
-            <div id="weather" class="value">
-                NUAGEUX
+            <div
+                id="weather"
+                class="value"
+            >
+                ----
             </div>
 
         </div>
@@ -115,11 +174,14 @@
         <div class="dataBlock">
 
             <div class="label">
-                PROCHAIN RER
+                CO₂
             </div>
 
-            <div id="rer" class="value">
-                4 MIN
+            <div
+                id="co2"
+                class="value"
+            >
+                ----
             </div>
 
         </div>
@@ -128,11 +190,46 @@
         <div class="dataBlock">
 
             <div class="label">
-                MAISON
+                LUMINOSITÉ
             </div>
 
-            <div id="houseStatus" class="value">
-                ACTIVE
+            <div
+                id="brightness"
+                class="value"
+            >
+                ----
+            </div>
+
+        </div>
+
+
+        <div class="dataBlock">
+
+            <div class="label">
+                PORTE
+            </div>
+
+            <div
+                id="door"
+                class="value"
+            >
+                ----
+            </div>
+
+        </div>
+
+
+        <div class="dataBlock">
+
+            <div class="label">
+                MUSIQUE
+            </div>
+
+            <div
+                id="music"
+                class="value small"
+            >
+                ----
             </div>
 
         </div>
@@ -140,7 +237,26 @@
     </div>
 
 
+    <!-- =====================================
+         BROUILLARD GLOBAL
+         ===================================== -->
+
+    <div id="mist">
+
+        <img
+            id="mistImage"
+            src="images/mist/Mist9.png"
+            alt=""
+        >
+
+    </div>
+
 </div>
+
+
+<!-- =========================================
+     JAVASCRIPT
+     ========================================= -->
 
 <script src="js/config.js"></script>
 <script src="js/clock.js"></script>
@@ -150,8 +266,8 @@
 <script src="js/expressions.js"></script>
 <script src="js/breathing.js"></script>
 <script src="js/homeassistant.js"></script>
-<script src="app.js"></script>
 <script src="js/mist.js"></script>
+<script src="app.js"></script>
 
 </body>
 

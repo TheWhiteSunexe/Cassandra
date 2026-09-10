@@ -2,10 +2,11 @@
    CASSANDRA - MIST
    ========================================= */
 
-var mist = null;
-
 var mistVisible = false;
 var mistAnimating = false;
+
+var mistElement = null;
+var mistImageElement = null;
 
 
 /* =========================================
@@ -14,30 +15,12 @@ var mistAnimating = false;
 
 function initMist() {
 
-    mist =
+    mistElement =
         document.getElementById("mist");
 
-    if (!mist) {
+    mistImageElement =
+        document.getElementById("mistImage");
 
-        console.log(
-            "Erreur : élément #mist introuvable."
-        );
-
-        return;
-    }
-
-    /*
-        Cassandra commence visible.
-        Le brouillard est donc à son état
-        final / absent.
-    */
-
-    setMistFrame("mist9");
-
-    mist.style.display = "block";
-    mist.style.opacity = "1";
-
-    mistVisible = false;
 }
 
 
@@ -47,158 +30,129 @@ function initMist() {
 
 function setMistFrame(frame) {
 
-    if (!mist) {
+    if (!mistImageElement) {
         return;
     }
 
-    var image =
-        getMistImage(frame);
-
-    if (!image) {
-        return;
-    }
-
-    mist.src = image;
+    mistImageElement.src =
+        "images/mist/Mist" +
+        frame +
+        ".png";
 }
 
 
 /* =========================================
-   RÉCUPÉRATION D'UNE IMAGE
+   CACHER CASSANDRA
    ========================================= */
 
-function getMistImage(name) {
-
-    if (!name) {
-        return null;
-    }
-
-    /*
-        Exemple :
-        mist1 → images/mist/Mist1.png
-    */
+function hideCassandra() {
 
     if (
-        name.indexOf("mist") === 0
+        mistAnimating ||
+        mistVisible
     ) {
-
-        var number =
-            name.replace("mist", "");
-
-        var index =
-            parseInt(number, 10) - 1;
-
-        if (
-            mistImages.normal &&
-            mistImages.normal[index]
-        ) {
-
-            return mistImages.normal[index];
-        }
-    }
-
-    return null;
-}
-
-
-/* =========================================
-   TRANSITION
-   ========================================= */
-
-function playMistTransition(
-    transitionName,
-    callback
-) {
-
-    if (!mist) {
-        return;
-    }
-
-    if (mistAnimating) {
-        return;
-    }
-
-    var transition =
-        mistTransitions[transitionName];
-
-    if (!transition) {
-
-        console.log(
-            "Transition de brouillard inconnue : " +
-            transitionName
-        );
-
         return;
     }
 
     mistAnimating = true;
 
-    var index = 0;
+    mistElement.style.display = "block";
 
-    var frameDuration =
-        animationConfig.mistFrameDuration || 80;
+
+    var frame = 1;
 
 
     function nextFrame() {
 
-        if (index >= transition.length) {
+        setMistFrame(frame);
 
-            mistAnimating = false;
+        frame++;
 
-            if (callback) {
-                callback();
-            }
+
+        if (frame <= 9) {
+
+            setTimeout(
+                nextFrame,
+                animationConfig.mistFrameDuration
+            );
 
             return;
         }
 
-        setMistFrame(
-            transition[index]
-        );
 
-        index++;
+        /*
+            Le brouillard est maintenant
+            complètement opaque.
 
-        setTimeout(
-            nextFrame,
-            frameDuration
-        );
+            Cassandra peut disparaître
+            derrière lui.
+        */
+
+        if (typeof cassandraVisible !== "undefined") {
+            cassandraVisible = false;
+        }
+
+
+        /*
+            On cache réellement Cassandra.
+        */
+
+        var cassandra =
+            document.getElementById(
+                "cassandra"
+            );
+
+        if (cassandra) {
+            cassandra.style.visibility =
+                "hidden";
+        }
+
+
+        /*
+            Les informations peuvent également
+            disparaître si on le souhaite.
+        */
+
+        var leftInfo =
+            document.getElementById(
+                "leftInfo"
+            );
+
+        var rightInfo =
+            document.getElementById(
+                "rightInfo"
+            );
+
+        if (leftInfo) {
+            leftInfo.style.visibility =
+                "hidden";
+        }
+
+        if (rightInfo) {
+            rightInfo.style.visibility =
+                "hidden";
+        }
+
+
+        /*
+            Le brouillard disparaît à son tour.
+
+            Il ne reste alors que le background.
+        */
+
+        setTimeout(function() {
+
+            mistElement.style.display =
+                "none";
+
+            mistAnimating = false;
+            mistVisible = true;
+
+        }, 100);
     }
 
 
     nextFrame();
-}
-
-
-/* =========================================
-   FAIRE DISPARAÎTRE CASSANDRA
-   ========================================= */
-
-function hideCassandra() {
-
-    if (mistVisible) {
-        return;
-    }
-
-    mistVisible = true;
-
-
-    /*
-        Le brouillard commence à apparaître.
-    */
-
-    playMistTransition(
-        "hide",
-        function() {
-
-            /*
-                Une fois le brouillard terminé,
-                Cassandra est complètement masquée.
-            */
-
-            cassandra.style.visibility =
-                "hidden";
-
-        }
-    );
 }
 
 
@@ -208,29 +162,92 @@ function hideCassandra() {
 
 function showCassandra() {
 
-    if (!mistVisible) {
+    if (
+        mistAnimating ||
+        !mistVisible
+    ) {
         return;
     }
 
+    mistAnimating = true;
+
+    mistElement.style.display = "block";
+
 
     /*
-        Cassandra doit être présente AVANT
-        que le brouillard commence à disparaître.
-
-        On la rend donc visible immédiatement,
-        mais elle est encore cachée par Mist9.
+        On commence avec le brouillard
+        complètement présent.
     */
 
-    cassandra.style.visibility =
-        "visible";
+    var frame = 9;
 
 
-    playMistTransition(
-        "show",
-        function() {
+    /*
+        Cassandra est déjà cachée.
+    */
 
-            mistVisible = false;
+    var cassandra =
+        document.getElementById(
+            "cassandra"
+        );
 
+    if (cassandra) {
+        cassandra.style.visibility =
+            "visible";
+    }
+
+
+    var leftInfo =
+        document.getElementById(
+            "leftInfo"
+        );
+
+    var rightInfo =
+        document.getElementById(
+            "rightInfo"
+        );
+
+    if (leftInfo) {
+        leftInfo.style.visibility =
+            "visible";
+    }
+
+    if (rightInfo) {
+        rightInfo.style.visibility =
+            "visible";
+    }
+
+
+    function nextFrame() {
+
+        setMistFrame(frame);
+
+        frame--;
+
+
+        if (frame >= 1) {
+
+            setTimeout(
+                nextFrame,
+                animationConfig.mistFrameDuration
+            );
+
+            return;
         }
-    );
+
+
+        /*
+            Le brouillard est complètement
+            dissipé.
+        */
+
+        mistElement.style.display =
+            "none";
+
+        mistAnimating = false;
+        mistVisible = false;
+    }
+
+
+    nextFrame();
 }

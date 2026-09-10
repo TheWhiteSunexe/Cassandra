@@ -89,6 +89,46 @@ function updateHomeAssistant() {
 
 
 /* =========================================
+   AFFICHAGE D'UNE VALEUR
+   ========================================= */
+
+function displayValue(
+    elementId,
+    value,
+    suffix
+) {
+
+    var element =
+        document.getElementById(
+            elementId
+        );
+
+
+    if (!element) {
+        return;
+    }
+
+
+    if (
+        value === null ||
+        value === undefined ||
+        value === ""
+    ) {
+
+        element.textContent =
+            "----";
+
+        return;
+    }
+
+
+    element.textContent =
+        value +
+        (suffix || "");
+}
+
+
+/* =========================================
    TRAITEMENT
    ========================================= */
 
@@ -103,42 +143,152 @@ function processHomeAssistantState(data) {
        TEMPÉRATURE
     --------------------------------------- */
 
+    displayValue(
+        "temperature",
+        data.environment
+            ? data.environment.temperature
+            : null,
+        "°"
+    );
+
+
+    /* ---------------------------------------
+       HUMIDITÉ
+    --------------------------------------- */
+
+    displayValue(
+        "humidity",
+        data.environment
+            ? data.environment.humidity
+            : null,
+        "%"
+    );
+
+
+    /* ---------------------------------------
+       CO2
+    --------------------------------------- */
+
+    displayValue(
+        "co2",
+        data.environment
+            ? data.environment.co2
+            : null,
+        " PPM"
+    );
+
+
+    /* ---------------------------------------
+       QUALITÉ DE L'AIR
+    --------------------------------------- */
+
+    var airQuality =
+        data.environment
+            ? data.environment.airQuality
+            : null;
+
+
     if (
-        data.environment &&
-        data.environment.temperature !== null
+        airQuality !== null &&
+        airQuality !== undefined &&
+        airQuality !== ""
     ) {
 
-        document.getElementById(
-            "temperature"
-        ).textContent =
-            data.environment.temperature
-            + "°";
+        displayValue(
+            "airQuality",
+            airQuality.toUpperCase()
+        );
+
+    } else {
+
+        displayValue(
+            "airQuality",
+            null
+        );
     }
+
+
+    /* ---------------------------------------
+       LUMINOSITÉ
+    --------------------------------------- */
+
+    displayValue(
+        "brightness",
+        data.environment
+            ? data.environment.brightness
+            : null,
+        " LX"
+    );
 
 
     /* ---------------------------------------
        MÉTÉO
     --------------------------------------- */
 
-    if (
-        data.weather &&
-        data.weather.description
-    ) {
+    displayValue(
+        "weather",
+        data.weather
+            ? data.weather.description
+            : null
+    );
 
-        document.getElementById(
-            "weather"
-        ).textContent =
-            data.weather.description;
+
+    /* ---------------------------------------
+       PORTE
+    --------------------------------------- */
+
+    var door =
+        data.room
+            ? data.room.door
+            : null;
+
+
+    if (door) {
+
+        displayValue(
+            "door",
+            door.toUpperCase()
+        );
+
+    } else {
+
+        displayValue(
+            "door",
+            null
+        );
     }
 
 
-    /*
-        Les autres données sont volontairement
-        seulement stockées pour le moment.
+    /* ---------------------------------------
+       MUSIQUE
+    --------------------------------------- */
 
-        Elles seront utilisées par le Behavior
-        Engine plus tard.
-    */
+    if (
+        data.media &&
+        data.media.playing
+    ) {
+
+        var artist =
+            data.media.artist ||
+            "----";
+
+        var title =
+            data.media.title ||
+            "----";
+
+
+        displayValue(
+            "music",
+            artist + " — " + title
+        );
+
+    } else {
+
+        displayValue(
+            "music",
+            null
+        );
+    }
 }
 
 
