@@ -36,15 +36,18 @@ html, body {
 /* =========================================
 CASSANDRA
 ========================================= */
-
 #cassandra {
-position: absolute;
-left: 50%;
-bottom: 0;
-width: 1200px;
-margin-left: -600px;
-z-index: 5;
-text-align: center;
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+
+    width: 1200px;
+    height: 676px;
+
+    margin-left: -600px;
+
+    z-index: 5;
+    text-align: center;
 }
 
 #cassandraImage {
@@ -61,11 +64,6 @@ text-align: center;
     margin: 0;
 }
 
-
-/* =========================================
-   CORPS
-   ========================================= */
-
 #cassandraBody {
     position: absolute;
     left: 0;
@@ -79,45 +77,33 @@ text-align: center;
     display: block;
     margin: 0;
 }
-/* =========================================
-VISAGE
-========================================= */
-
-/*
-IMPORTANT :
-Les images Eyes et Mouth font maintenant
-exactement la même taille que Cassandra :
-
-    1671 × 941 px
-
-Elles contiennent uniquement leur élément
-visible + transparence autour.
-
-On les superpose donc directement à
-Cassandra, puis on les réduit exactement
-comme l'image principale.
-*/
 
 #cassandraEyes {
-position: absolute;
-left: 0;
-top: 0;
-width: 100%;
-height: auto;
-z-index: 10;
-display: block;
-margin: 0;
+    position: absolute;
+    left: 0;
+    top: 0;
+
+    width: 100%;
+    height: auto;
+
+    z-index: 10;
+
+    display: block;
+    margin: 0;
 }
 
 #cassandraMouth {
-position: absolute;
-left: 0;
-top: 0;
-width: 100%;
-height: auto;
-z-index: 11;
-display: block;
-margin: 0;
+    position: absolute;
+    left: 0;
+    top: 0;
+
+    width: 100%;
+    height: auto;
+
+    z-index: 11;
+
+    display: block;
+    margin: 0;
 }
 
 

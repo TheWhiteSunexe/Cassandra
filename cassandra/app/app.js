@@ -40,18 +40,7 @@ function initCassandra() {
 
     scheduleBlink();
     scheduleBreathing();
-
-    updateHomeAssistant();
 }
-/* =========================================
-   HOME ASSISTANT
-   ========================================= */
-
-setInterval(
-    updateHomeAssistant,
-    10000
-);
-
 
 /* =========================================
    LANCEMENT
