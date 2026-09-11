@@ -183,34 +183,24 @@ margin: 0;
 /* =========================================
    BROUILLARD
    ========================================= */
-
 #mist {
     position: fixed;
+    left: 50%;
+    bottom: 0;
 
-    left: 0;
-    top: 0;
+    width: 1200px;
+    height: auto;
 
-    width: 100vw;
-    height: 100vh;
+    margin-left: -600px;
 
     z-index: 1000;
 
     display: none;
-
-    overflow: hidden;
-
     pointer-events: none;
 }
 
-
 #mistImage {
     display: block;
-
-    width: 100vw;
-    height: 100vh;
-
-    object-fit: fill;
-
-    margin: 0;
-    padding: 0;
+    width: 1200px;
+    height: auto;
 }

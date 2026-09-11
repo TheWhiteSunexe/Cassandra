@@ -3,28 +3,37 @@
    ========================================= */
 
 /*
-    Le behavior est le cerveau de Cassandra.
+    Le Behavior est le cerveau de Cassandra.
 
-    Il reçoit l'état abstrait provenant de
-    Home Assistant et décide de ce que
-    Cassandra doit faire.
+    Il reçoit les données provenant de
+    Home Assistant et décide des actions.
 
-    Il ne manipule jamais directement les images.
+    IMPORTANT :
 
-    Il appelle uniquement les fonctions :
+    Behavior est le SEUL module autorisé à
+    déclencher des mouvements ou expressions
+    en réaction aux événements.
+
+    Les automatismes naturels restent séparés :
 
         blink()
+        breathe()
+
+    Behavior peut déclencher :
+
         look()
-        smile()
         playExpression()
+        actions futures
         hideCassandra()
         showCassandra()
-        etc.
+
+    Behavior ne manipule JAMAIS directement
+    les images.
 */
 
 
 /* =========================================
-   ÉTAT DU COMPORTEMENT
+   ÉTAT
    ========================================= */
 
 var behaviorState = {
@@ -32,82 +41,94 @@ var behaviorState = {
     initialized: false,
 
     roomPresence: null,
-
     previousRoomPresence: null,
 
     door: null,
     previousDoor: null,
 
-    musicPlaying: false,
-    previousMusicPlaying: false,
+    musicPlaying: null,
+    previousMusicPlaying: null,
 
     airQuality: null,
     temperature: null,
     brightness: null,
+    co2: null,
 
-    lastReaction: null,
+    /*
+        Permet d'éviter plusieurs réactions
+        simultanées.
+    */
 
     reactionRunning: false,
+
+    /*
+        Évite de déclencher plusieurs fois
+        la même réaction.
+    */
 
     lastPresenceReaction: 0,
     lastDoorReaction: 0,
     lastMusicReaction: 0,
     lastEnvironmentReaction: 0
+
 };
 
 
 /* =========================================
-   PARAMÈTRES DU COMPORTEMENT
+   PARAMÈTRES
    ========================================= */
 
 var behaviorConfig = {
 
     /*
-        Temps minimum entre certaines réactions.
-        Évite que Cassandra réagisse en boucle.
+        Temps minimum entre deux réactions
+        du même type.
     */
 
-    presenceReactionCooldown: 10000,
+    presenceCooldown: 5000,
 
-    doorReactionCooldown: 15000,
+    doorCooldown: 10000,
 
-    musicReactionCooldown: 20000,
+    musicCooldown: 15000,
 
-    environmentReactionCooldown: 30000,
+    environmentCooldown: 30000,
 
 
     /*
-        Après combien de temps sans présence
-        on considère que Cassandra doit disparaître.
+        Délai avant disparition.
 
-        Pour le moment la détection HA fait déjà
-        la distinction on/off.
+        Cela évite qu'un bref OFF du capteur
+        fasse immédiatement disparaître Cassandra.
     */
 
     disappearanceDelay: 3000,
 
 
     /*
-        Durée approximative des réactions.
+        Durée des regards.
     */
 
-    shortReactionDuration: 1500,
+    lookDuration: 2500,
 
-    normalReactionDuration: 3000,
+    shortLookDuration: 1500,
 
 
     /*
-        Probabilité de petits comportements
-        spontanés.
+        Seuils environnementaux.
 
-        0.20 = 20%.
+        Ils pourront être ajustés plus tard.
     */
 
-    spontaneousReactionChance: 0.20,
+    highCO2: 1200,
 
-    spontaneousMinDelay: 12000,
+    veryHighCO2: 1800,
 
-    spontaneousMaxDelay: 30000
+    highTemperature: 28,
+
+    lowTemperature: 16,
+
+    highBrightness: 500
+
 };
 
 
@@ -125,33 +146,35 @@ function behaviorNow() {
 function behaviorCooldown(lastTime, cooldown) {
 
     return (
-        behaviorNow() - lastTime
-        >= cooldown
+        behaviorNow() - lastTime >= cooldown
     );
 
 }
 
 
 /* =========================================
-   RÉACTION DE PRÉSENCE
+   PRÉSENCE
    ========================================= */
 
 function behaviorPresenceChanged(present) {
 
-    if (present === true) {
+    /*
+        =====================================
+        PERSONNE PRÉSENTE
+        =====================================
+    */
 
-        /*
-            Quelqu'un entre dans la chambre.
-        */
+    if (present === true) {
 
         if (
             !behaviorCooldown(
                 behaviorState.lastPresenceReaction,
-                behaviorConfig.presenceReactionCooldown
+                behaviorConfig.presenceCooldown
             )
         ) {
             return;
         }
+
 
         behaviorState.lastPresenceReaction =
             behaviorNow();
@@ -165,14 +188,23 @@ function behaviorPresenceChanged(present) {
 
 
         /*
-            Petite pause avant de regarder.
-            Cela donne une impression plus naturelle.
+            Petite réaction d'accueil.
+
+            On laisse d'abord Cassandra
+            apparaître avant d'agir.
         */
 
         setTimeout(function() {
 
+            if (
+                behaviorState.roomPresence !== true
+            ) {
+                return;
+            }
+
+
             /*
-                Regard vers le centre.
+                Regard neutre.
             */
 
             setNormalEyes(1);
@@ -184,62 +216,82 @@ function behaviorPresenceChanged(present) {
 
             setTimeout(function() {
 
-                blink();
+                if (
+                    behaviorState.roomPresence === true
+                ) {
 
-            }, 500);
+                    blink();
+
+                }
+
+            }, 700);
 
 
             /*
                 Petit sourire.
+
+                C'est une réaction à la présence,
+                PAS une émotion aléatoire.
             */
 
             setTimeout(function() {
 
                 if (
+                    behaviorState.roomPresence === true &&
                     typeof playExpression === "function"
                 ) {
+
                     playExpression("smile");
+
                 }
 
-            }, 900);
+            }, 1200);
 
         }, 500);
 
 
-    } else {
+        return;
+    }
+
+
+    /*
+        =====================================
+        PERSONNE ABSENTE
+        =====================================
+    */
+
+    setTimeout(function() {
 
         /*
-            Personne n'est dans la chambre.
-
-            On attend quelques secondes avant
-            de faire disparaître Cassandra.
+            Vérifie que la personne n'est pas
+            revenue pendant le délai.
         */
 
-        setTimeout(function() {
+        if (
+            behaviorState.roomPresence === false
+        ) {
 
-            /*
-                Vérifier que personne n'est revenu
-                pendant l'attente.
-            */
+            hideCassandra();
 
-            if (
-                behaviorState.roomPresence === false
-            ) {
+        }
 
-                hideCassandra();
+    }, behaviorConfig.disappearanceDelay);
 
-            }
-
-        }, behaviorConfig.disappearanceDelay);
-    }
 }
 
 
 /* =========================================
-   RÉACTION À LA PORTE
+   PORTE
    ========================================= */
 
 function behaviorDoorChanged(door) {
+
+    if (
+        behaviorState.roomPresence !== true
+    ) {
+        return;
+    }
+
 
     if (!door) {
         return;
@@ -249,7 +301,7 @@ function behaviorDoorChanged(door) {
     if (
         !behaviorCooldown(
             behaviorState.lastDoorReaction,
-            behaviorConfig.doorReactionCooldown
+            behaviorConfig.doorCooldown
         )
     ) {
         return;
@@ -261,55 +313,54 @@ function behaviorDoorChanged(door) {
 
 
     /*
-        Porte ouverte
+        PORTE OUVERTE
     */
 
     if (door === "open") {
 
         /*
-            Cassandra regarde vers la droite.
+            La porte se trouve à droite
+            dans notre représentation actuelle.
 
-            À adapter plus tard selon la position
-            réelle de la porte dans la pièce.
+            À modifier facilement si besoin.
         */
 
         look(
             "right",
-            behaviorConfig.normalReactionDuration
+            behaviorConfig.lookDuration
         );
-
-
-        setTimeout(function() {
-
-            blink();
-
-        }, 1000);
-
 
         return;
     }
 
 
     /*
-        Porte fermée.
+        PORTE FERMÉE
 
-        Pour le moment Cassandra ne fait rien
-        de particulier.
+        Pas de réaction particulière pour
+        le moment.
     */
 
 }
 
 
 /* =========================================
-   RÉACTION À LA MUSIQUE
+   MUSIQUE
    ========================================= */
 
 function behaviorMusicChanged(playing) {
 
     if (
+        behaviorState.roomPresence !== true
+    ) {
+        return;
+    }
+
+
+    if (
         !behaviorCooldown(
             behaviorState.lastMusicReaction,
-            behaviorConfig.musicReactionCooldown
+            behaviorConfig.musicCooldown
         )
     ) {
         return;
@@ -320,75 +371,73 @@ function behaviorMusicChanged(playing) {
         behaviorNow();
 
 
-    if (playing) {
+    /*
+        MUSIQUE DÉMARRÉE
+    */
+
+    if (playing === true) {
 
         /*
-            La musique commence.
+            Pour l'instant :
 
-            Cassandra regarde légèrement ailleurs
-            puis revient.
+            regard vers la gauche.
+
+            On pourra plus tard décider que
+            Cassandra réagit différemment selon
+            l'artiste, le morceau, etc.
         */
 
         look(
             "left",
-            behaviorConfig.shortReactionDuration
+            behaviorConfig.shortLookDuration
         );
 
 
-        setTimeout(function() {
-
-            if (
-                typeof playExpression === "function"
-            ) {
-
-                playExpression("amused");
-
-            }
-
-        }, 700);
-
-
-    } else {
-
-        /*
-            La musique s'arrête.
-
-            Retour neutre.
-        */
-
-        setTimeout(function() {
-
-            if (
-                typeof playExpression === "function"
-            ) {
-
-                playExpression("neutral");
-
-            }
-
-        }, 300);
+        return;
     }
+
+
+    /*
+        MUSIQUE ARRÊTÉE
+
+        Aucun mouvement obligatoire.
+
+        On ne force pas une expression juste
+        parce que la musique s'arrête.
+    */
+
 }
 
 
 /* =========================================
-   RÉACTION À LA QUALITÉ DE L'AIR
+   QUALITÉ DE L'AIR
    ========================================= */
 
-function behaviorAirQuality(airQuality, co2) {
+function behaviorAirQuality(
+    airQuality,
+    co2
+) {
+
+    if (
+        behaviorState.roomPresence !== true
+    ) {
+        return;
+    }
+
 
     var poorAir =
         airQuality === "poor" ||
         airQuality === "bad";
 
-    var highCo2 =
+
+    var highCO2 =
         typeof co2 === "number" &&
-        co2 >= 1200;
+        co2 >= behaviorConfig.highCO2;
 
 
     if (
         !poorAir &&
-        !highCo2
+        !highCO2
     ) {
         return;
     }
@@ -397,7 +446,7 @@ function behaviorAirQuality(airQuality, co2) {
     if (
         !behaviorCooldown(
             behaviorState.lastEnvironmentReaction,
-            behaviorConfig.environmentReactionCooldown
+            behaviorConfig.environmentCooldown
         )
     ) {
         return;
@@ -411,31 +460,44 @@ function behaviorAirQuality(airQuality, co2) {
     /*
         Mauvaise qualité de l'air.
 
-        Cassandra devient légèrement gênée.
+        Expression uniquement parce qu'un
+        événement environnemental pertinent
+        vient de se produire.
     */
 
     if (
         typeof playExpression === "function"
     ) {
 
-        playExpression("disgust");
+        if (
+            typeof co2 === "number" &&
+            co2 >= behaviorConfig.veryHighCO2
+        ) {
 
+            playExpression("disgust");
+
+        } else {
+
+            playExpression("disgust");
+
+        }
     }
 
-
-    setTimeout(function() {
-
-        blink();
-
-    }, 1000);
 }
 
 
 /* =========================================
-   RÉACTION À LA TEMPÉRATURE
+   TEMPÉRATURE
    ========================================= */
 
 function behaviorTemperature(temperature) {
+
+    if (
+        behaviorState.roomPresence !== true
+    ) {
+        return;
+    }
+
 
     if (
         typeof temperature !== "number"
@@ -445,15 +507,18 @@ function behaviorTemperature(temperature) {
 
 
     /*
-        Température élevée.
+        TEMPÉRATURE ÉLEVÉE
     */
 
-    if (temperature >= 28) {
+    if (
+        temperature >=
+        behaviorConfig.highTemperature
+    ) {
 
         if (
             !behaviorCooldown(
                 behaviorState.lastEnvironmentReaction,
-                behaviorConfig.environmentReactionCooldown
+                behaviorConfig.environmentCooldown
             )
         ) {
             return;
@@ -478,15 +543,18 @@ function behaviorTemperature(temperature) {
 
 
     /*
-        Température basse.
+        TEMPÉRATURE BASSE
     */
 
-    if (temperature <= 16) {
+    if (
+        temperature <=
+        behaviorConfig.lowTemperature
+    ) {
 
         if (
             !behaviorCooldown(
                 behaviorState.lastEnvironmentReaction,
-                behaviorConfig.environmentReactionCooldown
+                behaviorConfig.environmentCooldown
             )
         ) {
             return;
@@ -504,64 +572,17 @@ function behaviorTemperature(temperature) {
             playExpression("tired");
 
         }
+
     }
+
 }
 
 
 /* =========================================
-   RÉACTION À LA LUMINOSITÉ
+   LUMINOSITÉ
    ========================================= */
 
 function behaviorBrightness(brightness) {
-
-    if (
-        typeof brightness !== "number"
-    ) {
-        return;
-    }
-
-
-    /*
-        Pièce très lumineuse.
-
-        Cassandra peut regarder légèrement
-        vers le bas.
-    */
-
-    if (brightness >= 500) {
-
-        if (
-            !behaviorCooldown(
-                behaviorState.lastEnvironmentReaction,
-                behaviorConfig.environmentReactionCooldown
-            )
-        ) {
-            return;
-        }
-
-
-        behaviorState.lastEnvironmentReaction =
-            behaviorNow();
-
-
-        look(
-            "bottom",
-            behaviorConfig.shortReactionDuration
-        );
-    }
-}
-
-
-/* =========================================
-   COMPORTEMENT SPONTANÉ
-   ========================================= */
-
-function spontaneousBehavior() {
-
-    /*
-        Cassandra ne fait rien si elle
-        n'est pas présente.
-    */
 
     if (
         behaviorState.roomPresence !== true
@@ -570,153 +591,46 @@ function spontaneousBehavior() {
     }
 
 
-    /*
-        Ne pas interrompre une réaction.
-    */
-
     if (
-        behaviorState.reactionRunning
+        typeof brightness !== "number"
     ) {
         return;
     }
 
 
-    /*
-        Tirage aléatoire.
-    */
-
     if (
-        Math.random() >
-        behaviorConfig.spontaneousReactionChance
+        brightness <
+        behaviorConfig.highBrightness
     ) {
         return;
     }
 
 
-    var actions = [
+    if (
+        !behaviorCooldown(
+            behaviorState.lastEnvironmentReaction,
+            behaviorConfig.environmentCooldown
+        )
+    ) {
+        return;
+    }
 
-        "left",
 
-        "right",
+    behaviorState.lastEnvironmentReaction =
+        behaviorNow();
 
-        "top",
 
+    /*
+        Forte lumière.
+
+        Cassandra regarde légèrement vers le bas.
+    */
+
+    look(
         "bottom",
+        behaviorConfig.shortLookDuration
+    );
 
-        "blink",
-
-        "neutral"
-
-    ];
-
-
-    var action =
-        actions[
-            Math.floor(
-                Math.random() *
-                actions.length
-            )
-        ];
-
-
-    behaviorState.reactionRunning =
-        true;
-
-
-    switch (action) {
-
-        case "left":
-
-            look(
-                "left",
-                behaviorConfig.shortReactionDuration
-            );
-
-            break;
-
-
-        case "right":
-
-            look(
-                "right",
-                behaviorConfig.shortReactionDuration
-            );
-
-            break;
-
-
-        case "top":
-
-            look(
-                "top",
-                behaviorConfig.shortReactionDuration
-            );
-
-            break;
-
-
-        case "bottom":
-
-            look(
-                "bottom",
-                behaviorConfig.shortReactionDuration
-            );
-
-            break;
-
-
-        case "blink":
-
-            blink();
-
-            break;
-
-
-        case "neutral":
-
-            if (
-                typeof playExpression === "function"
-            ) {
-
-                playExpression("neutral");
-
-            }
-
-            break;
-    }
-
-
-    setTimeout(function() {
-
-        behaviorState.reactionRunning =
-            false;
-
-    }, behaviorConfig.shortReactionDuration);
-}
-
-
-/* =========================================
-   PLANIFICATION DU COMPORTEMENT SPONTANÉ
-   ========================================= */
-
-function scheduleSpontaneousBehavior() {
-
-    var delay =
-        behaviorConfig.spontaneousMinDelay +
-        Math.random() *
-        (
-            behaviorConfig.spontaneousMaxDelay -
-            behaviorConfig.spontaneousMinDelay
-        );
-
-
-    setTimeout(function() {
-
-        spontaneousBehavior();
-
-        scheduleSpontaneousBehavior();
-
-    }, delay);
 }
 
 
@@ -726,72 +640,81 @@ function scheduleSpontaneousBehavior() {
 
 function updateBehavior(data) {
 
-    if (
-        !data ||
-        !data.presence
-    ) {
+    if (!data) {
         return;
     }
 
 
-    var roomPresence =
-        data.presence.room;
+    /* =====================================
+       PRÉSENCE
+       ===================================== */
 
+    if (data.presence) {
 
-    /*
-        Initialisation
-    */
-
-    if (
-        !behaviorState.initialized
-    ) {
-
-        behaviorState.initialized =
-            true;
-
-        behaviorState.roomPresence =
-            roomPresence;
-
-        behaviorState.previousRoomPresence =
-            roomPresence;
+        var roomPresence =
+            data.presence.room;
 
 
         /*
-            Si Cassandra est déjà absente
-            au démarrage, on la cache.
+            Premier état reçu.
         */
 
         if (
-            roomPresence === false
+            !behaviorState.initialized
         ) {
 
-            hideCassandra();
-
-        }
-
-    } else {
-
-
-        /*
-            Changement de présence
-        */
-
-        if (
-            roomPresence !==
-            behaviorState.roomPresence
-        ) {
-
-            behaviorState.previousRoomPresence =
-                behaviorState.roomPresence;
+            behaviorState.initialized =
+                true;
 
             behaviorState.roomPresence =
                 roomPresence;
 
+            behaviorState.previousRoomPresence =
+                roomPresence;
 
-            behaviorPresenceChanged(
-                roomPresence
-            );
+
+            /*
+                Si Cassandra démarre alors que
+                personne n'est présent :
+
+                background seul.
+            */
+
+            if (
+                roomPresence === false
+            ) {
+
+                hideCassandra();
+
+            }
+
+        } else {
+
+
+            /*
+                Changement de présence.
+            */
+
+            if (
+                roomPresence !==
+                behaviorState.roomPresence
+            ) {
+
+                behaviorState.previousRoomPresence =
+                    behaviorState.roomPresence;
+
+                behaviorState.roomPresence =
+                    roomPresence;
+
+
+                behaviorPresenceChanged(
+                    roomPresence
+                );
+
+            }
+
         }
+
     }
 
 
@@ -806,7 +729,7 @@ function updateBehavior(data) {
 
 
         if (
-            behaviorState.door !== door
+            door !== behaviorState.door
         ) {
 
             behaviorState.previousDoor =
@@ -817,19 +740,24 @@ function updateBehavior(data) {
 
 
             /*
-                Ne réagit que si Cassandra
-                est actuellement présente.
+                Ne réagit pas au premier état reçu.
+
+                On veut uniquement réagir à un
+                changement réel.
             */
 
             if (
-                roomPresence === true
+                behaviorState.previousDoor !== null
             ) {
 
                 behaviorDoorChanged(
                     door
                 );
+
             }
+
         }
+
     }
 
 
@@ -844,8 +772,8 @@ function updateBehavior(data) {
 
 
         if (
-            behaviorState.musicPlaying !==
-            musicPlaying
+            musicPlaying !==
+            behaviorState.musicPlaying
         ) {
 
             behaviorState.previousMusicPlaying =
@@ -855,15 +783,22 @@ function updateBehavior(data) {
                 musicPlaying;
 
 
+            /*
+                Ne réagit pas au premier état reçu.
+            */
+
             if (
-                roomPresence === true
+                behaviorState.previousMusicPlaying !== null
             ) {
 
                 behaviorMusicChanged(
                     musicPlaying
                 );
+
             }
+
         }
+
     }
 
 
@@ -873,43 +808,53 @@ function updateBehavior(data) {
 
     if (data.environment) {
 
-        behaviorState.airQuality =
+        var airQuality =
             data.environment.airQuality;
 
-        behaviorState.temperature =
+        var co2 =
+            data.environment.co2;
+
+        var temperature =
             data.environment.temperature;
 
-        behaviorState.brightness =
+        var brightness =
             data.environment.brightness;
 
 
+        behaviorState.airQuality =
+            airQuality;
+
+        behaviorState.co2 =
+            co2;
+
+        behaviorState.temperature =
+            temperature;
+
+        behaviorState.brightness =
+            brightness;
+
+
         /*
-            CO2
+            Ces fonctions ne sont appelées
+            que lorsqu'une condition pertinente
+            est rencontrée.
         */
 
         behaviorAirQuality(
-            data.environment.airQuality,
-            data.environment.co2
+            airQuality,
+            co2
         );
-
-
-        /*
-            Température
-        */
 
         behaviorTemperature(
-            data.environment.temperature
+            temperature
         );
-
-
-        /*
-            Luminosité
-        */
 
         behaviorBrightness(
-            data.environment.brightness
+            brightness
         );
+
     }
+
 }
 
 
@@ -922,6 +867,22 @@ function initBehavior() {
     behaviorState.initialized =
         false;
 
-    scheduleSpontaneousBehavior();
+    behaviorState.roomPresence =
+        null;
+
+    behaviorState.previousRoomPresence =
+        null;
+
+    behaviorState.door =
+        null;
+
+    behaviorState.previousDoor =
+        null;
+
+    behaviorState.musicPlaying =
+        null;
+
+    behaviorState.previousMusicPlaying =
+        null;
 
 }

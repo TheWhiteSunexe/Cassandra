@@ -261,7 +261,7 @@ var animationConfig = {
     breathingMinDelay: 3000,
     breathingMaxDelay: 5000, 
 
-    mistFrameDuration: 80,
+    mistFrameDuration: 180,
 };
 
 

@@ -39,8 +39,6 @@ function initCassandra() {
     initBehavior();
 
     scheduleBlink();
-    scheduleLook();
-    scheduleExpression();
     scheduleBreathing();
 
     updateHomeAssistant();
