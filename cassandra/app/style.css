@@ -34,6 +34,31 @@ html, body {
 }
 
 /* =========================================
+   POISSONS
+   ========================================= */
+
+#fish {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    pointer-events: none;
+}
+
+#fishImage {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: auto;
+    display: block;
+    margin: 0;
+    pointer-events: none;
+}
+
+/* =========================================
 CASSANDRA
 ========================================= */
 #cassandra {

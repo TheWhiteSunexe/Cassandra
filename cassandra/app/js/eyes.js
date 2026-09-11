@@ -342,7 +342,10 @@ function playEyeTransition(
 
 function blink() {
 
-    if (blinking) {
+    if (
+        blinking ||
+        fishWatching
+    ) {
         return;
     }
 
@@ -395,7 +398,8 @@ function look(direction, duration) {
 
     if (
         looking ||
-        blinking
+        blinking ||
+        fishWatching
     ) {
         return;
     }
