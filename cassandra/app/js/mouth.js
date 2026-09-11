@@ -15,6 +15,14 @@ var speaking = false;
 function setMouth(number) {
 
     if (
+        !mouth ||
+        !loadedMouth ||
+        !loadedMouth.normal
+    ) {
+        return;
+    }
+
+    if (
         number < 1 ||
         number > loadedMouth.normal.length
     ) {
@@ -32,12 +40,76 @@ function setMouth(number) {
 
 function setMouthExpression(expression) {
 
-    if (!loadedMouth[expression]) {
+    if (
+        !mouth ||
+        !loadedMouth ||
+        !loadedMouth[expression]
+    ) {
         return;
     }
 
+    /*
+        Les expressions fixes sont stockées
+        directement comme Image.
+
+        Exemple :
+        loadedMouth.o
+        loadedMouth.kiss
+        loadedMouth.smile1
+    */
+
     mouth.src =
         loadedMouth[expression].src;
+}
+
+
+/* =========================================
+   RÉSOLUTION D'UN ÉTAT
+   ========================================= */
+
+/*
+    Convertit un état logique en image.
+
+    Exemples :
+
+        "normal1"
+            → Mouth1.png
+
+        "normal4"
+            → Mouth4.png
+
+        "o"
+            → MouthO.png
+
+        "kiss"
+            → MouthKiss.png
+*/
+
+function setMouthState(state) {
+
+    if (!state) {
+        return;
+    }
+
+    if (
+        typeof state === "string" &&
+        state.indexOf("normal") === 0
+    ) {
+
+        var number =
+            parseInt(
+                state.replace("normal", ""),
+                10
+            );
+
+        if (!isNaN(number)) {
+            setMouth(number);
+        }
+
+        return;
+    }
+
+    setMouthExpression(state);
 }
 
 
@@ -49,8 +121,10 @@ function playMouthTransition(sequence, speed, callback) {
 
     if (
         !sequence ||
+        !Array.isArray(sequence) ||
         sequence.length === 0
     ) {
+
         if (callback) {
             callback();
         }
@@ -58,7 +132,25 @@ function playMouthTransition(sequence, speed, callback) {
         return;
     }
 
+
+    /*
+        Valeur par défaut.
+
+        Cela évite qu'un speed undefined
+        crée des setTimeout incohérents.
+    */
+
+    if (
+        typeof speed !== "number" ||
+        speed < 0
+    ) {
+        speed =
+            animationConfig.speechFrameDuration;
+    }
+
+
     var frame = 0;
+
 
     function nextFrame() {
 
@@ -71,21 +163,14 @@ function playMouthTransition(sequence, speed, callback) {
             return;
         }
 
-        var state =
-            sequence[frame];
 
-        if (
-            typeof state === "number"
-        ) {
+        setMouthState(
+            sequence[frame]
+        );
 
-            setMouth(state);
-
-        } else {
-
-            setMouthExpression(state);
-        }
 
         frame++;
+
 
         if (frame < sequence.length) {
 
@@ -100,6 +185,7 @@ function playMouthTransition(sequence, speed, callback) {
         }
     }
 
+
     nextFrame();
 }
 
@@ -110,13 +196,28 @@ function playMouthTransition(sequence, speed, callback) {
 
 function speakMouth(sequence, speed) {
 
-    if (speaking) {
+    if (
+        speaking ||
+        !sequence ||
+        sequence.length === 0
+    ) {
         return;
     }
 
     speaking = true;
 
+
+    if (
+        typeof speed !== "number" ||
+        speed < 0
+    ) {
+        speed =
+            animationConfig.speechFrameDuration;
+    }
+
+
     var frame = 0;
+
 
     function nextFrame() {
 
@@ -129,17 +230,21 @@ function speakMouth(sequence, speed) {
             return;
         }
 
+
         setMouth(
             sequence[frame]
         );
 
+
         frame++;
+
 
         setTimeout(
             nextFrame,
             speed
         );
     }
+
 
     nextFrame();
 }
@@ -155,11 +260,13 @@ function speakRandomPattern() {
         return;
     }
 
+
     var index =
         Math.floor(
             Math.random() *
             mouthPatterns.length
         );
+
 
     speakMouth(
         mouthPatterns[index],

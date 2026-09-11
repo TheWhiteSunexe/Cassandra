@@ -48,12 +48,37 @@ text-align: center;
 }
 
 #cassandraImage {
-display: block;
-width: 1200px;
-height: auto;
-margin: 0;
+    position: absolute;
+    left: 0;
+    top: 0;
+
+    width: 100%;
+    height: auto;
+
+    z-index: 5;
+
+    display: block;
+    margin: 0;
 }
 
+
+/* =========================================
+   CORPS
+   ========================================= */
+
+#cassandraBody {
+    position: absolute;
+    left: 0;
+    top: 0;
+
+    width: 100%;
+    height: auto;
+
+    z-index: 6;
+
+    display: block;
+    margin: 0;
+}
 /* =========================================
 VISAGE
 ========================================= */

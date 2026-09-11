@@ -419,8 +419,24 @@ function playExpressionMouth(expression) {
         typeof playMouthTransition === "function"
     ) {
 
+        var transition =
+            mouthTransitions[
+                expression.mouthTransition
+            ];
+
+        if (!transition) {
+
+            console.warn(
+                "Transition de bouche inconnue : " +
+                expression.mouthTransition
+            );
+
+            return;
+        }
+
         playMouthTransition(
-            expression.mouthTransition
+            transition,
+            animationConfig.speechFrameDuration
         );
 
         return;

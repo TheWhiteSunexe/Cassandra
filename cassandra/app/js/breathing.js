@@ -126,14 +126,13 @@ function breathe() {
 
 function scheduleBreathing() {
 
-    /*
-        Une respiration toutes les
-        3 à 5 secondes environ.
-    */
-
     var delay =
-        3000 +
-        Math.random() * 2000;
+        animationConfig.breathingMinDelay +
+        Math.random() *
+        (
+            animationConfig.breathingMaxDelay -
+            animationConfig.breathingMinDelay
+        );
 
 
     setTimeout(function() {
