@@ -341,13 +341,13 @@ function playEyeTransition(
    ========================================= */
 
 function blink() {
-
+/*
     if (
         blinking ||
         fishWatching
     ) {
         return;
-    }
+    }*/
 
     blinking = true;
 
