@@ -20,7 +20,6 @@ function initMist() {
 
     mistImageElement =
         document.getElementById("mistImage");
-
 }
 
 
@@ -51,6 +50,10 @@ function hideCassandra() {
         mistAnimating ||
         mistVisible
     ) {
+        return;
+    }
+
+    if (!mistElement) {
         return;
     }
 
@@ -88,62 +91,45 @@ function hideCassandra() {
             derrière lui.
         */
 
+        var cassandra =
+            document.getElementById("cassandra");
+
+        if (cassandra) {
+            cassandra.style.visibility = "hidden";
+        }
+
+
+        var leftInfo =
+            document.getElementById("leftInfo");
+
+        var rightInfo =
+            document.getElementById("rightInfo");
+
+        if (leftInfo) {
+            leftInfo.style.visibility = "hidden";
+        }
+
+        if (rightInfo) {
+            rightInfo.style.visibility = "hidden";
+        }
+
+
+        /*
+            Synchronisation de l'état global
+        */
+
         if (typeof cassandraVisible !== "undefined") {
             cassandraVisible = false;
         }
 
 
         /*
-            On cache réellement Cassandra.
-        */
-
-        var cassandra =
-            document.getElementById(
-                "cassandra"
-            );
-
-        if (cassandra) {
-            cassandra.style.visibility =
-                "hidden";
-        }
-
-
-        /*
-            Les informations peuvent également
-            disparaître si on le souhaite.
-        */
-
-        var leftInfo =
-            document.getElementById(
-                "leftInfo"
-            );
-
-        var rightInfo =
-            document.getElementById(
-                "rightInfo"
-            );
-
-        if (leftInfo) {
-            leftInfo.style.visibility =
-                "hidden";
-        }
-
-        if (rightInfo) {
-            rightInfo.style.visibility =
-                "hidden";
-        }
-
-
-        /*
-            Le brouillard disparaît à son tour.
-
-            Il ne reste alors que le background.
+            Le brouillard disparaît.
         */
 
         setTimeout(function() {
 
-            mistElement.style.display =
-                "none";
+            mistElement.style.display = "none";
 
             mistAnimating = false;
             mistVisible = true;
@@ -169,52 +155,56 @@ function showCassandra() {
         return;
     }
 
+    if (!mistElement) {
+        return;
+    }
+
     mistAnimating = true;
 
     mistElement.style.display = "block";
 
 
     /*
-        On commence avec le brouillard
-        complètement présent.
+        Le brouillard commence complètement opaque.
     */
 
     var frame = 9;
 
 
     /*
-        Cassandra est déjà cachée.
+        Cassandra réapparaît immédiatement
+        derrière le brouillard.
     */
 
     var cassandra =
-        document.getElementById(
-            "cassandra"
-        );
+        document.getElementById("cassandra");
 
     if (cassandra) {
-        cassandra.style.visibility =
-            "visible";
+        cassandra.style.visibility = "visible";
     }
 
 
     var leftInfo =
-        document.getElementById(
-            "leftInfo"
-        );
+        document.getElementById("leftInfo");
 
     var rightInfo =
-        document.getElementById(
-            "rightInfo"
-        );
+        document.getElementById("rightInfo");
 
     if (leftInfo) {
-        leftInfo.style.visibility =
-            "visible";
+        leftInfo.style.visibility = "visible";
     }
 
     if (rightInfo) {
-        rightInfo.style.visibility =
-            "visible";
+        rightInfo.style.visibility = "visible";
+    }
+
+
+    /*
+        Synchronisation de l'état global
+    */
+
+    if (typeof cassandraVisible !== "undefined") {
+        cassandraVisible = true;
     }
 
 
@@ -237,12 +227,10 @@ function showCassandra() {
 
 
         /*
-            Le brouillard est complètement
-            dissipé.
+            Le brouillard est complètement dissipé.
         */
 
-        mistElement.style.display =
-            "none";
+        mistElement.style.display = "none";
 
         mistAnimating = false;
         mistVisible = false;
