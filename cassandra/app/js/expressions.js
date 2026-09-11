@@ -727,7 +727,7 @@ function shocked(duration) {
 
 /* =========================================
    EXPRESSIONS ALÉATOIRES
-   ========================================= */
+   =========================================
 
 function scheduleExpression() {
 
@@ -740,7 +740,7 @@ function scheduleExpression() {
         );
 
 
-    setTimeout(function() {
+    setTimeout(function() { */
 
         /*
             Pour l'instant, Cassandra utilise
@@ -750,7 +750,7 @@ function scheduleExpression() {
             On pourra ensuite créer un véritable
             système de personnalité avec plusieurs
             expressions pondérées.
-        */
+        
 
         var duration =
             animationConfig.expressionMinDuration +
@@ -767,4 +767,4 @@ function scheduleExpression() {
         scheduleExpression();
 
     }, delay);
-}
+}*/
