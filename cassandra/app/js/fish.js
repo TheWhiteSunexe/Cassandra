@@ -101,12 +101,11 @@ var fishFrames = [
    ========================================= */
 
 var fishEyeFrames = [
-
-    "images/eyes/EyesTopLeft.png",
     "images/eyes/EyesLeftTop.png",
+    "images/eyes/EyesTopLeft.png",
     "images/eyes/EyesTop.png",
-    "images/eyes/EyesRightTop.png",
-    "images/eyes/EyesTopRight.png"
+    "images/eyes/EyesTopRight.png",
+    "images/eyes/EyesRightTop.png"
 
 ];
 
