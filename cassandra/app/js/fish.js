@@ -102,11 +102,11 @@ var fishFrames = [
 
 var fishEyeFrames = [
 
-    "images/eyes/EyesBottomLeft.png",
-    "images/eyes/EyesLeftBottom.png",
+    "images/eyes/EyesTopLeft.png",
+    "images/eyes/EyesLeftTop.png",
     "images/eyes/EyesTop.png",
-    "images/eyes/EyesRightBottom.png",
-    "images/eyes/EyesBottomRight.png"
+    "images/eyes/EyesRightTop.png",
+    "images/eyes/EyesTopRight.png"
 
 ];
 
@@ -229,35 +229,22 @@ function playFishPass(callback) {
     }
 
     fishRunning = true;
+    fishWatching = true;
 
-
-    /*
-        Le poisson commence à gauche.
-    */
+    fish.style.display = "block";
 
     var frame = 0;
 
-
     function nextFrame() {
 
-        /*
-            Fin du passage.
-        */
+        if (frame >= fishFrames.length) {
 
-        if (
-            frame >= fishFrames.length
-        ) {
+            fish.style.display = "none";
 
             fishRunning = false;
-
-
-            /*
-                Cassandra revient au regard
-                normal.
-            */
+            fishWatching = false;
 
             setNormalEyes(1);
-
 
             if (callback) {
                 callback();
@@ -266,53 +253,22 @@ function playFishPass(callback) {
             return;
         }
 
-
-        /*
-            Affichage du poisson.
-        */
-
         setFishFrame(frame);
 
-
-        /*
-            Deux poissons = un regard.
-
-            0 / 1 → regard 0
-            2 / 3 → regard 1
-            4 / 5 → regard 2
-            6 / 7 → regard 3
-            8 / 9 → regard 4
-        */
-
         var eyeFrame =
-            Math.floor(
-                frame / 2
-            );
+            Math.floor(frame / 2);
 
-
-        setFishEye(
-            eyeFrame
-        );
-
+        setFishEye(eyeFrame);
 
         frame++;
-
-
-        /*
-            Même vitesse pour le poisson
-            et la progression du regard.
-        */
 
         setTimeout(
             nextFrame,
             fishConfig.frameDuration
         );
-
     }
 
-
     nextFrame();
-
 }
 
 
