@@ -71,7 +71,7 @@ var fishConfig = {
         automatiquement après le troisième passage.
     */
 
-    loop: true
+    loop: false
 
 };
 
@@ -384,11 +384,115 @@ function initFish() {
 
 
     /*
-        Pour le moment :
-
-        démarrage automatique.
+        Les poissons sont cachés
+        au démarrage.
     */
 
-    playFishSequence();
+    fish.style.display = "none";
 
+
+    /*
+        Vérification de l'horaire
+        toutes les secondes.
+    */
+
+    setInterval(
+        checkFishSchedule,
+        1000
+    );
+
+}
+
+/* =========================================
+   PROGRAMMATION HORAIRE
+   ========================================= */
+
+function checkFishSchedule() {
+
+    var now = new Date();
+
+    var hours = now.getHours();
+    var minutes = now.getMinutes();
+    var seconds = now.getSeconds();
+
+
+    /*
+        Déclenchement à 09:00:00
+        ou 22:00:00
+    */
+
+    if (
+        seconds === 0 &&
+        minutes === 0 &&
+        (
+            hours === 9 ||
+            hours === 22
+        )
+    ) {
+
+        console.log(
+            "Cassandra - lancement de la séquence poissons à " +
+            hours +
+            ":00"
+        );
+
+        playFishSequence();
+    }
+}
+
+var lastFishSchedule = "";
+
+function checkFishSchedule() {
+
+    var now = new Date();
+
+    var hours = now.getHours();
+    var minutes = now.getMinutes();
+
+    var scheduleKey =
+        now.getFullYear() +
+        "-" +
+        now.getMonth() +
+        "-" +
+        now.getDate() +
+        "-" +
+        hours +
+        "-" +
+        minutes;
+
+
+    if (
+        minutes !== 0 ||
+        (
+            hours !== 9 &&
+            hours !== 22
+        )
+    ) {
+        return;
+    }
+
+
+    /*
+        Évite de lancer plusieurs fois
+        la même séquence pendant la minute.
+    */
+
+    if (
+        scheduleKey === lastFishSchedule
+    ) {
+        return;
+    }
+
+
+    lastFishSchedule = scheduleKey;
+
+
+    console.log(
+        "Cassandra - séquence poissons à " +
+        hours +
+        ":00"
+    );
+
+
+    playFishSequence();
 }
