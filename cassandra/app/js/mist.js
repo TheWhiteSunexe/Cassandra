@@ -2,7 +2,7 @@
    CASSANDRA - MIST
    ========================================= */
 
-var mistVisible = false;
+var cassandraHidden = false;
 var mistAnimating = false;
 
 var mistElement = null;
@@ -24,12 +24,34 @@ function initMist() {
 
 
 /* =========================================
+   RÉCUPÉRATION DES ÉLÉMENTS
+   ========================================= */
+
+function ensureMistInitialized() {
+
+    if (
+        !mistElement ||
+        !mistImageElement
+    ) {
+        initMist();
+    }
+
+    return (
+        mistElement &&
+        mistImageElement
+    );
+}
+
+
+/* =========================================
    AFFICHAGE D'UNE IMAGE
    ========================================= */
 
 function setMistFrame(frame) {
 
-    if (!mistImageElement) {
+    if (
+        !ensureMistInitialized()
+    ) {
         return;
     }
 
@@ -48,12 +70,14 @@ function hideCassandra() {
 
     if (
         mistAnimating ||
-        mistVisible
+        cassandraHidden
     ) {
         return;
     }
 
-    if (!mistElement) {
+    if (
+        !ensureMistInitialized()
+    ) {
         return;
     }
 
@@ -84,18 +108,17 @@ function hideCassandra() {
 
 
         /*
-            Le brouillard est maintenant
-            complètement opaque.
+            Le brouillard est complètement opaque.
 
-            Cassandra peut disparaître
-            derrière lui.
+            Cassandra disparaît maintenant.
         */
 
         var cassandra =
             document.getElementById("cassandra");
 
         if (cassandra) {
-            cassandra.style.visibility = "hidden";
+            cassandra.style.visibility =
+                "hidden";
         }
 
 
@@ -105,22 +128,19 @@ function hideCassandra() {
         var rightInfo =
             document.getElementById("rightInfo");
 
+
         if (leftInfo) {
-            leftInfo.style.visibility = "hidden";
+            leftInfo.style.visibility =
+                "hidden";
         }
 
         if (rightInfo) {
-            rightInfo.style.visibility = "hidden";
+            rightInfo.style.visibility =
+                "hidden";
         }
 
 
-        /*
-            Synchronisation de l'état global
-        */
-
-        if (typeof cassandraVisible !== "undefined") {
-            cassandraVisible = false;
-        }
+        cassandraHidden = true;
 
 
         /*
@@ -132,7 +152,6 @@ function hideCassandra() {
             mistElement.style.display = "none";
 
             mistAnimating = false;
-            mistVisible = true;
 
         }, 100);
     }
@@ -150,12 +169,14 @@ function showCassandra() {
 
     if (
         mistAnimating ||
-        !mistVisible
+        !cassandraHidden
     ) {
         return;
     }
 
-    if (!mistElement) {
+    if (
+        !ensureMistInitialized()
+    ) {
         return;
     }
 
@@ -165,22 +186,23 @@ function showCassandra() {
 
 
     /*
-        Le brouillard commence complètement opaque.
+        Le brouillard est complètement présent.
     */
 
     var frame = 9;
 
 
     /*
-        Cassandra réapparaît immédiatement
-        derrière le brouillard.
+        Cassandra est placée derrière
+        le brouillard avant sa disparition.
     */
 
     var cassandra =
         document.getElementById("cassandra");
 
     if (cassandra) {
-        cassandra.style.visibility = "visible";
+        cassandra.style.visibility =
+            "visible";
     }
 
 
@@ -190,22 +212,19 @@ function showCassandra() {
     var rightInfo =
         document.getElementById("rightInfo");
 
+
     if (leftInfo) {
-        leftInfo.style.visibility = "visible";
+        leftInfo.style.visibility =
+            "visible";
     }
 
     if (rightInfo) {
-        rightInfo.style.visibility = "visible";
+        rightInfo.style.visibility =
+            "visible";
     }
 
 
-    /*
-        Synchronisation de l'état global
-    */
-
-    if (typeof cassandraVisible !== "undefined") {
-        cassandraVisible = true;
-    }
+    cassandraHidden = false;
 
 
     function nextFrame() {
@@ -233,7 +252,6 @@ function showCassandra() {
         mistElement.style.display = "none";
 
         mistAnimating = false;
-        mistVisible = false;
     }
 
 

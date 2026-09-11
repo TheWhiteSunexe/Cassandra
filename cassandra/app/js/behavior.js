@@ -46,6 +46,21 @@ var behaviorState = {
     door: null,
     previousDoor: null,
 
+    /*
+        Heure du dernier mouvement détecté.
+
+        Permet de déterminer si une absence
+        correspond réellement à un départ.
+    */
+
+    lastPresenceDetected: 0,
+
+    /*
+        Timer utilisé pour confirmer un départ.
+    */
+
+    departureTimer: null,
+
     musicPlaying: null,
     previousMusicPlaying: null,
 
@@ -95,13 +110,14 @@ var behaviorConfig = {
 
 
     /*
-        Délai avant disparition.
+        Délai avant confirmation d'un départ.
 
-        Cela évite qu'un bref OFF du capteur
-        fasse immédiatement disparaître Cassandra.
+        Si aucun mouvement n'est détecté
+        pendant cette durée, Cassandra considère
+        que la personne est probablement partie.
     */
 
-    disappearanceDelay: 3000,
+    disappearanceDelay: 10000,
 
 
     /*
@@ -153,6 +169,72 @@ function behaviorCooldown(lastTime, cooldown) {
 
 
 /* =========================================
+   ANNULATION DU DÉPART
+   ========================================= */
+
+function cancelDepartureTimer() {
+
+    if (
+        behaviorState.departureTimer !== null
+    ) {
+
+        clearTimeout(
+            behaviorState.departureTimer
+        );
+
+        behaviorState.departureTimer =
+            null;
+    }
+
+}
+
+
+/* =========================================
+   CONFIRMATION DU DÉPART
+   ========================================= */
+
+function scheduleDepartureCheck() {
+
+    /*
+        Un ancien timer ne doit jamais
+        rester actif.
+    */
+
+    cancelDepartureTimer();
+
+
+    behaviorState.departureTimer =
+        setTimeout(function() {
+
+            behaviorState.departureTimer =
+                null;
+
+
+            /*
+                Si un mouvement a été détecté
+                entre-temps, le départ est annulé.
+            */
+
+            if (
+                behaviorState.roomPresence === true
+            ) {
+                return;
+            }
+
+
+            /*
+                Cassandra disparaît uniquement
+                après confirmation de l'absence.
+            */
+
+            hideCassandra();
+
+        }, behaviorConfig.disappearanceDelay);
+
+}
+
+
+/* =========================================
    PRÉSENCE
    ========================================= */
 
@@ -160,11 +242,44 @@ function behaviorPresenceChanged(present) {
 
     /*
         =====================================
-        PERSONNE PRÉSENTE
+        MOUVEMENT DÉTECTÉ
         =====================================
     */
 
     if (present === true) {
+
+        /*
+            On vient de détecter quelqu'un.
+
+            Le départ potentiel est donc annulé.
+        */
+
+        cancelDepartureTimer();
+
+
+        /*
+            On mémorise le dernier mouvement.
+        */
+
+        behaviorState.lastPresenceDetected =
+            behaviorNow();
+
+
+        /*
+            Cassandra doit être présente.
+
+            Si elle était cachée, elle réapparaît.
+        */
+
+        showCassandra();
+
+
+        /*
+            Réaction d'accueil uniquement lors
+            d'un véritable retour.
+
+            On conserve le cooldown.
+        */
 
         if (
             !behaviorCooldown(
@@ -178,13 +293,6 @@ function behaviorPresenceChanged(present) {
 
         behaviorState.lastPresenceReaction =
             behaviorNow();
-
-
-        /*
-            Cassandra apparaît.
-        */
-
-        showCassandra();
 
 
         /*
@@ -229,9 +337,6 @@ function behaviorPresenceChanged(present) {
 
             /*
                 Petit sourire.
-
-                C'est une réaction à la présence,
-                PAS une émotion aléatoire.
             */
 
             setTimeout(function() {
@@ -256,26 +361,18 @@ function behaviorPresenceChanged(present) {
 
     /*
         =====================================
-        PERSONNE ABSENTE
+        PLUS DE MOUVEMENT
         =====================================
     */
 
-    setTimeout(function() {
+    /*
+        On ne fait PAS disparaître Cassandra
+        immédiatement.
 
-        /*
-            Vérifie que la personne n'est pas
-            revenue pendant le délai.
-        */
+        On programme une vérification.
+    */
 
-        if (
-            behaviorState.roomPresence === false
-        ) {
-
-            hideCassandra();
-
-        }
-
-    }, behaviorConfig.disappearanceDelay);
+    scheduleDepartureCheck();
 
 }
 
@@ -286,17 +383,27 @@ function behaviorPresenceChanged(present) {
 
 function behaviorDoorChanged(door) {
 
-    if (
-        behaviorState.roomPresence !== true
-    ) {
-        return;
-    }
-
-
     if (!door) {
         return;
     }
 
+
+    /*
+        =====================================
+        RÉACTION VISUELLE À LA PORTE
+        =====================================
+
+        Chaque changement d'état de la porte
+        fait regarder Cassandra vers la droite.
+
+        Cela fonctionne aussi bien pour :
+
+            fermé → ouvert
+
+        que :
+
+            ouvert → fermé
+    */
 
     if (
         !behaviorCooldown(
@@ -313,32 +420,37 @@ function behaviorDoorChanged(door) {
 
 
     /*
-        PORTE OUVERTE
+        Si Cassandra est cachée, elle ne peut
+        évidemment pas regarder.
     */
 
-    if (door === "open") {
-
-        /*
-            La porte se trouve à droite
-            dans notre représentation actuelle.
-
-            À modifier facilement si besoin.
-        */
-
-        look(
-            "right",
-            behaviorConfig.lookDuration
-        );
-
+    if (
+        typeof cassandraHidden !== "undefined" &&
+        cassandraHidden
+    ) {
         return;
     }
 
 
-    /*
-        PORTE FERMÉE
+    look(
+        "right",
+        behaviorConfig.lookDuration
+    );
 
-        Pas de réaction particulière pour
-        le moment.
+
+    /*
+        =====================================
+        PORTE OUVERTE
+        =====================================
+
+        Une porte ouverte rend l'interprétation
+        de l'absence de mouvement plus intéressante.
+
+        Mais on ne fait pas disparaître Cassandra
+        immédiatement.
+
+        Le timer de présence reste la source
+        principale de confirmation du départ.
     */
 
 }
@@ -378,13 +490,7 @@ function behaviorMusicChanged(playing) {
     if (playing === true) {
 
         /*
-            Pour l'instant :
-
-            regard vers la gauche.
-
-            On pourra plus tard décider que
-            Cassandra réagit différemment selon
-            l'artiste, le morceau, etc.
+            Regard vers la gauche.
         */
 
         look(
@@ -401,9 +507,6 @@ function behaviorMusicChanged(playing) {
         MUSIQUE ARRÊTÉE
 
         Aucun mouvement obligatoire.
-
-        On ne force pas une expression juste
-        parce que la musique s'arrête.
     */
 
 }
@@ -457,30 +560,12 @@ function behaviorAirQuality(
         behaviorNow();
 
 
-    /*
-        Mauvaise qualité de l'air.
-
-        Expression uniquement parce qu'un
-        événement environnemental pertinent
-        vient de se produire.
-    */
-
     if (
         typeof playExpression === "function"
     ) {
 
-        if (
-            typeof co2 === "number" &&
-            co2 >= behaviorConfig.veryHighCO2
-        ) {
+        playExpression("disgust");
 
-            playExpression("disgust");
-
-        } else {
-
-            playExpression("disgust");
-
-        }
     }
 
 }
@@ -657,6 +742,11 @@ function updateBehavior(data) {
 
         /*
             Premier état reçu.
+
+            IMPORTANT :
+            on ne déclenche aucune disparition.
+
+            Cassandra conserve son état actuel.
         */
 
         if (
@@ -674,19 +764,19 @@ function updateBehavior(data) {
 
 
             /*
-                Si Cassandra démarre alors que
-                personne n'est présent :
-
-                background seul.
+                Si un mouvement est déjà détecté
+                au démarrage, on mémorise l'heure.
             */
 
             if (
-                roomPresence === false
+                roomPresence === true
             ) {
 
-                hideCassandra();
+                behaviorState.lastPresenceDetected =
+                    behaviorNow();
 
             }
+
 
         } else {
 
@@ -710,6 +800,24 @@ function updateBehavior(data) {
                 behaviorPresenceChanged(
                     roomPresence
                 );
+
+            }
+
+
+            /*
+                Même sans changement d'état,
+                un nouveau mouvement détecté
+                doit annuler un éventuel départ.
+            */
+
+            if (
+                roomPresence === true
+            ) {
+
+                cancelDepartureTimer();
+
+                behaviorState.lastPresenceDetected =
+                    behaviorNow();
 
             }
 
@@ -834,12 +942,6 @@ function updateBehavior(data) {
             brightness;
 
 
-        /*
-            Ces fonctions ne sont appelées
-            que lorsqu'une condition pertinente
-            est rencontrée.
-        */
-
         behaviorAirQuality(
             airQuality,
             co2
@@ -864,6 +966,14 @@ function updateBehavior(data) {
 
 function initBehavior() {
 
+    /*
+        Si un timer de départ existe,
+        on le supprime.
+    */
+
+    cancelDepartureTimer();
+
+
     behaviorState.initialized =
         false;
 
@@ -877,6 +987,12 @@ function initBehavior() {
         null;
 
     behaviorState.previousDoor =
+        null;
+
+    behaviorState.lastPresenceDetected =
+        0;
+
+    behaviorState.departureTimer =
         null;
 
     behaviorState.musicPlaying =
