@@ -294,7 +294,6 @@ function processHomeAssistantState(data) {
         COMPORTEMENT CASSANDRA
     */
     updateBehavior(data);
-    updateCassandraPresence(data);
 }
 
 
