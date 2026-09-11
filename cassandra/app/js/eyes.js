@@ -395,14 +395,14 @@ function scheduleBlink() {
    ========================================= */
 
 function look(direction, duration) {
-
+/*
     if (
         looking ||
         blinking ||
         fishWatching
     ) {
         return;
-    }
+    }*/
 
 
     looking = true;
