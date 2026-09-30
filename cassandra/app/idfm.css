@@ -1,0 +1,382 @@
+#transportScreen {
+
+            position: absolute;
+
+            inset: 0;
+
+            box-sizing: border-box;
+
+            padding: 55px 75px;
+
+            background:
+
+                radial-gradient(
+                    ellipse at center,
+                    rgba(255, 170, 0, 0.025) 0%,
+                    rgba(0, 0, 0, 0) 70%
+                ),
+
+                #050608;
+
+        }
+
+
+        /* Scanlines CRT */
+
+        #transportScreen::after {
+
+            content: "";
+
+            position: absolute;
+
+            inset: 0;
+
+            pointer-events: none;
+
+            background:
+                repeating-linear-gradient(
+                    to bottom,
+                    rgba(255,255,255,0.018) 0px,
+                    rgba(255,255,255,0.018) 1px,
+                    transparent 1px,
+                    transparent 4px
+                );
+
+            opacity: 0.45;
+
+        }
+
+
+        /* =========================================================
+           EN-TÊTE
+           ========================================================= */
+
+        .transportHeader {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            height: 72px;
+
+            border-bottom: 2px solid #f5a400;
+
+        }
+
+        .transportTitle {
+
+            font-size: 42px;
+
+            font-weight: bold;
+
+            letter-spacing: -2px;
+
+            text-transform: uppercase;
+
+        }
+
+        .transportClock {
+
+            font-size: 32px;
+
+            font-weight: bold;
+
+            white-space: nowrap;
+
+        }
+
+
+        /* =========================================================
+           GARE / DIRECTION
+           ========================================================= */
+
+        .transportStation {
+
+            display: flex;
+
+            align-items: baseline;
+
+            gap: 25px;
+
+            margin-top: 22px;
+
+            margin-bottom: 12px;
+
+        }
+
+        .stationLabel {
+
+            font-size: 21px;
+
+            text-transform: uppercase;
+
+        }
+
+        .stationName {
+
+            font-size: 38px;
+
+            font-weight: bold;
+
+        }
+
+        .direction {
+
+            margin-left: auto;
+
+            font-size: 23px;
+
+            text-transform: uppercase;
+
+        }
+
+
+        /* =========================================================
+           LISTE DES TRAINS
+           ========================================================= */
+
+        #departures {
+
+            display: flex;
+
+            flex-direction: column;
+
+        }
+
+
+        .departure {
+
+            display: grid;
+
+            grid-template-columns:
+                100px
+                minmax(250px, 1fr)
+                180px
+                75px;
+
+            align-items: center;
+
+            min-height: 112px;
+
+            border-top: 2px solid #f5a400;
+
+        }
+
+        .departure:last-child {
+
+            border-bottom: 2px solid #f5a400;
+
+        }
+
+
+        /* Icône RER */
+
+        .lineIcon {
+
+            width: 58px;
+            height: 58px;
+
+            border: 3px solid #f5a400;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            font-size: 27px;
+
+            font-weight: bold;
+
+        }
+
+
+        /* Destination */
+
+        .destination {
+
+            display: flex;
+
+            flex-direction: column;
+
+            min-width: 0;
+
+        }
+
+        .destinationName {
+
+            font-size: 33px;
+
+            font-weight: bold;
+
+            white-space: nowrap;
+
+            overflow: hidden;
+
+            text-overflow: ellipsis;
+
+        }
+
+        .trainInfo {
+
+            margin-top: 3px;
+
+            font-size: 20px;
+
+            white-space: nowrap;
+
+            overflow: hidden;
+
+            text-overflow: ellipsis;
+
+        }
+
+
+        /* Heure */
+
+        .departureTime {
+
+            font-size: 35px;
+
+            font-weight: bold;
+
+            text-align: right;
+
+        }
+
+
+        /* Voie */
+
+        .platform {
+
+            height: 62px;
+
+            width: 62px;
+
+            border: 3px solid #f5a400;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 30px;
+
+            font-weight: bold;
+
+            margin-left: auto;
+
+        }
+
+
+        /* =========================================================
+           BANDEAU INFORMATION
+           ========================================================= */
+
+        .transportFooter {
+
+            position: absolute;
+
+            left: 75px;
+
+            right: 75px;
+
+            bottom: 48px;
+
+            height: 65px;
+
+            display: flex;
+
+            align-items: center;
+
+            border-top: 2px solid #f5a400;
+
+            font-size: 22px;
+
+        }
+
+        .warning {
+
+            margin-right: 20px;
+
+            font-size: 28px;
+
+            font-weight: bold;
+
+        }
+
+        #transportMessage {
+
+            white-space: nowrap;
+
+            overflow: hidden;
+
+            text-overflow: ellipsis;
+
+        }
+
+
+        /* =========================================================
+           PETITS ÉCRANS
+           ========================================================= */
+
+        @media (max-width: 1000px) {
+
+            #transportScreen {
+
+                padding: 30px;
+
+            }
+
+            .departure {
+
+                grid-template-columns:
+                    70px
+                    minmax(150px, 1fr)
+                    120px
+                    55px;
+
+            }
+
+            .destinationName {
+
+                font-size: 24px;
+
+            }
+
+            .departureTime {
+
+                font-size: 27px;
+
+            }
+
+            .transportFooter {
+
+                left: 30px;
+                right: 30px;
+
+            }
+
+        }
+
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #050608;
+}
+
+.transportEmpty {
+    min-height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-top: 2px solid #f5a400;
+    border-bottom: 2px solid #f5a400;
+    font-size: 28px;
+    font-weight: bold;
+}

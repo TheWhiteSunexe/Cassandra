@@ -1,133 +1,69 @@
-html,
-body {
+html, body {
     margin: 0;
     padding: 0;
-
     width: 100%;
     height: 100%;
-
     overflow: hidden;
-
     background: #050608;
-
     font-family: "Courier New", Courier, monospace;
 }
 
-
-/* =========================================================
-   ÉCRAN PRINCIPAL
-   ========================================================= */
+/* =========================================
+   ÉCRAN
+   ========================================= */
 
 #screen {
     position: relative;
-
     width: 100%;
     height: 100%;
-
     overflow: hidden;
-
     color: #e8eeee;
 }
 
-
-/* =========================================================
-   GESTION DES ÉCRANS
-   ========================================================= */
-
-.appScreen {
-    position: absolute;
-
-    left: 0;
-    top: 0;
-
-    width: 100%;
-    height: 100%;
-
-    overflow: hidden;
-}
-
-
-/* =========================================================
-   ÉCRAN CASSANDRA
-   ========================================================= */
-
-#cassandraScreen {
-    position: absolute;
-
-    left: 0;
-    top: 0;
-
-    width: 100%;
-    height: 100%;
-
-    overflow: hidden;
-}
-
-
-/* =========================================================
-   BACKGROUND CASSANDRA
-   ========================================================= */
+/* =========================================
+   BACKGROUND
+============================================ */
 
 #background {
     position: absolute;
-
     left: 0;
     top: 0;
-
     width: 100%;
     height: 100%;
-
     z-index: 1;
-
-    display: block;
 }
 
-
-/* =========================================================
+/* =========================================
    POISSONS
-   ========================================================= */
+   ========================================= */
 
 #fish {
     display: none;
-
     position: absolute;
-
     left: 0;
     top: 0;
-
     width: 100%;
     height: 100%;
-
     z-index: 2;
-
     pointer-events: none;
 }
-
 
 #fishImage {
     position: absolute;
-
     left: 0;
     top: 0;
-
     width: 100%;
     height: auto;
-
     display: block;
-
     margin: 0;
-
     pointer-events: none;
 }
 
-
-/* =========================================================
-   CASSANDRA
-   ========================================================= */
-
+/* =========================================
+CASSANDRA
+========================================= */
 #cassandra {
     position: absolute;
-
     left: 50%;
     bottom: 0;
 
@@ -137,14 +73,11 @@ body {
     margin-left: -600px;
 
     z-index: 5;
-
     text-align: center;
 }
 
-
 #cassandraImage {
     position: absolute;
-
     left: 0;
     top: 0;
 
@@ -154,14 +87,11 @@ body {
     z-index: 5;
 
     display: block;
-
     margin: 0;
 }
 
-
 #cassandraBody {
     position: absolute;
-
     left: 0;
     top: 0;
 
@@ -171,14 +101,11 @@ body {
     z-index: 6;
 
     display: block;
-
     margin: 0;
 }
 
-
 #cassandraEyes {
     position: absolute;
-
     left: 0;
     top: 0;
 
@@ -188,14 +115,11 @@ body {
     z-index: 10;
 
     display: block;
-
     margin: 0;
 }
 
-
 #cassandraMouth {
     position: absolute;
-
     left: 0;
     top: 0;
 
@@ -205,126 +129,101 @@ body {
     z-index: 11;
 
     display: block;
-
     margin: 0;
 }
 
 
-/* =========================================================
+/* =========================================
    INFORMATIONS GAUCHE
-   ========================================================= */
+   ========================================= */
 
 #leftInfo {
     position: absolute;
-
     left: 70px;
     top: 35%;
-
     width: 230px;
-
     margin-top: -190px;
-
     z-index: 10;
 }
 
 
-/* =========================================================
+/* =========================================
    INFORMATIONS DROITE
-   ========================================================= */
+   ========================================= */
 
 #rightInfo {
     position: absolute;
-
     right: 70px;
     top: 35%;
-
     width: 230px;
-
     margin-top: -190px;
-
     z-index: 10;
 
     text-align: right;
 }
 
 
-/* =========================================================
-   BLOCS D'INFORMATIONS
-   ========================================================= */
+/* =========================================
+   BLOCS
+   ========================================= */
 
 .dataBlock {
     margin-bottom: 48px;
 }
 
 
-/* =========================================================
+/* =========================================
    LABEL
-   ========================================================= */
+   ========================================= */
 
 .label {
     font-family: "Courier New", Courier, monospace;
-
     font-size: 12px;
-
     font-weight: bold;
-
     letter-spacing: 3px;
-
     opacity: 0.65;
 }
 
 
-/* =========================================================
+/* =========================================
    VALEUR
-   ========================================================= */
+   ========================================= */
 
 .value {
+
     margin-top: 8px;
-
     font-family: "Courier New", Courier, monospace;
-
     font-size: 27px;
-
     font-weight: bold;
-
     letter-spacing: 2px;
 }
 
 
 .value.small {
     font-size: 18px;
-
     letter-spacing: 2px;
 }
 
 
-/* =========================================================
-   PETITE LIGNE RÉTRO
-   ========================================================= */
+/* =========================================
+   PETITE LIGNE RETRO
+   ========================================= */
 
 .dataBlock:after {
     content: "";
-
     display: block;
-
     width: 45px;
     height: 1px;
-
     margin-top: 13px;
-
     background: #e8eeee;
-
     opacity: 0.28;
 }
 
-
-/* =========================================================
+/* =========================================
    BROUILLARD
-   ========================================================= */
-
+   ========================================= */
 #mist {
     position: fixed;
-
     left: 0;
     top: 0;
 
@@ -334,12 +233,9 @@ body {
     z-index: 1000;
 
     display: none;
-
     pointer-events: none;
-
     overflow: hidden;
 }
-
 
 #mistImage {
     display: block;
@@ -348,510 +244,5 @@ body {
     height: 100%;
 
     object-fit: cover;
-
     object-position: center;
-}
-
-
-/* =========================================================
-   =========================================================
-   ÉCRAN 2 — TRANSPORTS IDFM
-   =========================================================
-   ========================================================= */
-
-#transportScreen {
-    display: none;
-
-    position: absolute;
-
-    left: 0;
-    top: 0;
-
-    width: 100%;
-    height: 100%;
-
-    box-sizing: border-box;
-
-    padding: 55px 75px;
-
-    overflow: hidden;
-
-    background:
-        radial-gradient(
-            ellipse at center,
-            rgba(255, 170, 0, 0.025) 0%,
-            rgba(0, 0, 0, 0) 70%
-        ),
-        #050608;
-
-    color: #f5a400;
-
-    font-family: "Courier New", Courier, monospace;
-}
-
-
-/* =========================================================
-   EFFET CRT / SCANLINES
-   ========================================================= */
-
-#transportScreen::after {
-    content: "";
-
-    position: absolute;
-
-    left: 0;
-    top: 0;
-
-    width: 100%;
-    height: 100%;
-
-    pointer-events: none;
-
-    z-index: 100;
-
-    background:
-        repeating-linear-gradient(
-            to bottom,
-
-            rgba(255, 255, 255, 0.018) 0px,
-            rgba(255, 255, 255, 0.018) 1px,
-
-            transparent 1px,
-            transparent 4px
-        );
-
-    opacity: 0.45;
-}
-
-
-/* =========================================================
-   EN-TÊTE
-   ========================================================= */
-
-.transportHeader {
-    position: relative;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-
-    width: 100%;
-    height: 72px;
-
-    box-sizing: border-box;
-
-    border-bottom: 2px solid #f5a400;
-
-    z-index: 2;
-}
-
-
-.transportTitle {
-    font-size: 42px;
-
-    font-weight: bold;
-
-    letter-spacing: -2px;
-
-    text-transform: uppercase;
-}
-
-
-.transportClock {
-    font-size: 32px;
-
-    font-weight: bold;
-
-    white-space: nowrap;
-}
-
-
-/* =========================================================
-   GARE / DIRECTION
-   ========================================================= */
-
-.transportStation {
-    position: relative;
-
-    display: flex;
-
-    align-items: baseline;
-
-    gap: 25px;
-
-    width: 100%;
-
-    margin-top: 22px;
-    margin-bottom: 12px;
-
-    z-index: 2;
-}
-
-
-.stationLabel {
-    font-size: 21px;
-
-    text-transform: uppercase;
-
-    opacity: 0.75;
-}
-
-
-.stationName {
-    font-size: 38px;
-
-    font-weight: bold;
-
-    letter-spacing: -1px;
-}
-
-
-.direction {
-    margin-left: auto;
-
-    font-size: 23px;
-
-    text-transform: uppercase;
-
-    white-space: nowrap;
-}
-
-
-/* =========================================================
-   LISTE DES DÉPARTS
-   ========================================================= */
-
-#departures {
-    position: relative;
-
-    display: flex;
-
-    flex-direction: column;
-
-    width: 100%;
-
-    z-index: 2;
-}
-
-
-/* =========================================================
-   TRAIN
-   ========================================================= */
-
-.departure {
-    position: relative;
-
-    display: grid;
-
-    grid-template-columns:
-        100px
-        minmax(250px, 1fr)
-        180px
-        75px;
-
-    align-items: center;
-
-    width: 100%;
-
-    min-height: 112px;
-
-    box-sizing: border-box;
-
-    border-top: 2px solid #f5a400;
-}
-
-
-.departure:last-child {
-    border-bottom: 2px solid #f5a400;
-}
-
-
-/* =========================================================
-   ICÔNE LIGNE
-   ========================================================= */
-
-.lineIcon {
-    width: 58px;
-    height: 58px;
-
-    box-sizing: border-box;
-
-    border: 3px solid #f5a400;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    font-size: 27px;
-
-    font-weight: bold;
-}
-
-
-/* =========================================================
-   DESTINATION
-   ========================================================= */
-
-.destination {
-    display: flex;
-
-    flex-direction: column;
-
-    min-width: 0;
-}
-
-
-.destinationName {
-    font-size: 33px;
-
-    font-weight: bold;
-
-    letter-spacing: -1px;
-
-    white-space: nowrap;
-
-    overflow: hidden;
-
-    text-overflow: ellipsis;
-}
-
-
-.trainInfo {
-    margin-top: 3px;
-
-    font-size: 20px;
-
-    white-space: nowrap;
-
-    overflow: hidden;
-
-    text-overflow: ellipsis;
-
-    opacity: 0.95;
-}
-
-
-/* =========================================================
-   HEURE DE DÉPART
-   ========================================================= */
-
-.departureTime {
-    font-size: 35px;
-
-    font-weight: bold;
-
-    text-align: right;
-
-    white-space: nowrap;
-}
-
-
-/* =========================================================
-   VOIE
-   ========================================================= */
-
-.platform {
-    width: 62px;
-    height: 62px;
-
-    box-sizing: border-box;
-
-    border: 3px solid #f5a400;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    margin-left: auto;
-
-    font-size: 30px;
-
-    font-weight: bold;
-}
-
-
-/* =========================================================
-   BANDEAU D'INFORMATION
-   ========================================================= */
-
-.transportFooter {
-    position: absolute;
-
-    left: 75px;
-    right: 75px;
-
-    bottom: 48px;
-
-    height: 65px;
-
-    box-sizing: border-box;
-
-    display: flex;
-
-    align-items: center;
-
-    border-top: 2px solid #f5a400;
-
-    z-index: 2;
-
-    font-size: 22px;
-}
-
-
-.warning {
-    margin-right: 20px;
-
-    font-size: 28px;
-
-    font-weight: bold;
-}
-
-
-#transportMessage {
-    white-space: nowrap;
-
-    overflow: hidden;
-
-    text-overflow: ellipsis;
-}
-
-
-/* =========================================================
-   SÉLECTEUR MANUEL
-   ========================================================= */
-
-#screenSelector {
-    position: fixed;
-
-    right: 20px;
-    bottom: 20px;
-
-    z-index: 9999;
-
-    display: flex;
-
-    gap: 8px;
-
-    padding: 8px;
-
-    background: rgba(5, 6, 8, 0.90);
-
-    border: 1px solid rgba(255, 170, 0, 0.35);
-
-    font-family: "Courier New", Courier, monospace;
-}
-
-
-#screenSelector button {
-    min-width: 44px;
-    min-height: 36px;
-
-    padding: 5px 10px;
-
-    box-sizing: border-box;
-
-    background: transparent;
-
-    border: 1px solid rgba(255, 170, 0, 0.45);
-
-    color: #f5a400;
-
-    font-family: inherit;
-
-    font-size: 16px;
-
-    cursor: pointer;
-
-    transition:
-        background 0.15s ease,
-        color 0.15s ease;
-}
-
-
-#screenSelector button.active {
-    background: #f5a400;
-
-    color: #050608;
-}
-
-
-#screenSelector button:hover {
-    background: #f5a400;
-
-    color: #050608;
-}
-
-
-/* =========================================================
-   ADAPTATION PETITS ÉCRANS
-   ========================================================= */
-
-@media (max-width: 1000px) {
-
-    #transportScreen {
-        padding: 30px;
-    }
-
-
-    .transportTitle {
-        font-size: 32px;
-    }
-
-
-    .transportClock {
-        font-size: 26px;
-    }
-
-
-    .stationName {
-        font-size: 30px;
-    }
-
-
-    .direction {
-        font-size: 18px;
-    }
-
-
-    .departure {
-        grid-template-columns:
-            70px
-            minmax(150px, 1fr)
-            120px
-            55px;
-    }
-
-
-    .destinationName {
-        font-size: 24px;
-    }
-
-
-    .trainInfo {
-        font-size: 16px;
-    }
-
-
-    .departureTime {
-        font-size: 27px;
-    }
-
-
-    .platform {
-        width: 50px;
-        height: 50px;
-
-        font-size: 24px;
-    }
-
-
-    .transportFooter {
-        left: 30px;
-        right: 30px;
-    }
-
 }

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Cassandra — IDFM</title>
+<link rel="stylesheet" href="idfm.css">
+</head>
+<body>
+<div class="appScreen" id="transportScreen">
+<!-- EN-TÊTE -->
+<div class="transportHeader">
+<div class="transportTitle">
+                Prochains départs
+            </div>
+<div class="transportClock" id="transportClock">
+                00:00
+            </div>
+</div>
+<!-- GARE -->
+<div class="transportStation">
+<div class="stationLabel">
+                Gare
+            </div>
+<div class="stationName">
+                Sucy - Bonneuil
+            </div>
+<div class="direction">
+                Direction Paris
+            </div>
+</div>
+<!-- TRAINS -->
+<div id="departures">
+<div class="departure">
+<div class="lineIcon">
+                    A
+                </div>
+<div class="destination">
+<div class="destinationName">
+                        Paris
+                    </div>
+<div class="trainInfo">
+                        RER A · Train en approche
+                    </div>
+</div>
+<div class="departureTime">
+                    --:--
+                </div>
+<div class="platform">
+                    -
+                </div>
+</div>
+<div class="departure">
+<div class="lineIcon">
+                    A
+                </div>
+<div class="destination">
+<div class="destinationName">
+                        Paris
+                    </div>
+<div class="trainInfo">
+                        RER A · Train
+                    </div>
+</div>
+<div class="departureTime">
+                    --:--
+                </div>
+<div class="platform">
+                    -
+                </div>
+</div>
+<div class="departure">
+<div class="lineIcon">
+                    A
+                </div>
+<div class="destination">
+<div class="destinationName">
+                        Paris
+                    </div>
+<div class="trainInfo">
+                        RER A · Train
+                    </div>
+</div>
+<div class="departureTime">
+                    --:--
+                </div>
+<div class="platform">
+                    -
+                </div>
+</div>
+<div class="departure">
+<div class="lineIcon">
+                    A
+                </div>
+<div class="destination">
+<div class="destinationName">
+                        Paris
+                    </div>
+<div class="trainInfo">
+                        RER A · Train
+                    </div>
+</div>
+<div class="departureTime">
+                    --:--
+                </div>
+<div class="platform">
+                    -
+                </div>
+</div>
+<div class="departure">
+<div class="lineIcon">
+                    A
+                </div>
+<div class="destination">
+<div class="destinationName">
+                        Paris
+                    </div>
+<div class="trainInfo">
+                        RER A · Train
+                    </div>
+</div>
+<div class="departureTime">
+                    --:--
+                </div>
+<div class="platform">
+                    -
+                </div>
+</div>
+</div>
+<!-- MESSAGE -->
+<div class="transportFooter">
+<div class="warning">
+                ⚠
+            </div>
+<div id="transportMessage">
+                Informations trafic — Données temps réel IDFM
+            </div>
+</div>
+</div>
+<script src="js/external.js"></script>
+<script src="js/idfm.js"></script>
+<script src="js/transport.js"></script>
+<script>
+updateTransportClock();
+setInterval(updateTransportClock, 1000);
+startIDFM();
+</script>
+</body>
+</html>
