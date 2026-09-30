@@ -9,88 +9,751 @@
 
     <link rel="stylesheet" href="style.css">
 
+    <style>
+
+        /* =========================================================
+           GESTION DES ÉCRANS
+           ========================================================= */
+
+        .appScreen {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        #transportScreen {
+            display: none;
+            background: #050608;
+            color: #f5a400;
+            font-family: "Courier New", Courier, monospace;
+            overflow: hidden;
+        }
+
+
+        /* =========================================================
+           SÉLECTEUR MANUEL
+           
+           Temporaire : sera remplacé plus tard par la télécommande
+           IKEA via Home Assistant.
+           ========================================================= */
+
+        #screenSelector {
+
+            position: fixed;
+
+            right: 20px;
+            bottom: 20px;
+
+            z-index: 9999;
+
+            display: flex;
+            gap: 8px;
+
+            padding: 8px;
+
+            background: rgba(5, 6, 8, 0.90);
+
+            border: 1px solid rgba(255, 170, 0, 0.35);
+
+            font-family: "Courier New", monospace;
+
+        }
+
+        #screenSelector button {
+
+            min-width: 44px;
+            min-height: 36px;
+
+            padding: 5px 10px;
+
+            background: transparent;
+
+            border: 1px solid rgba(255, 170, 0, 0.45);
+
+            color: #f5a400;
+
+            font-family: inherit;
+
+            cursor: pointer;
+
+        }
+
+        #screenSelector button.active {
+
+            background: #f5a400;
+
+            color: #050608;
+
+        }
+
+        #screenSelector button:hover {
+
+            background: #f5a400;
+
+            color: #050608;
+
+        }
+
+
+        /* =========================================================
+           ÉCRAN IDFM
+           ========================================================= */
+
+        #transportScreen {
+
+            position: absolute;
+
+            inset: 0;
+
+            box-sizing: border-box;
+
+            padding: 55px 75px;
+
+            background:
+
+                radial-gradient(
+                    ellipse at center,
+                    rgba(255, 170, 0, 0.025) 0%,
+                    rgba(0, 0, 0, 0) 70%
+                ),
+
+                #050608;
+
+        }
+
+
+        /* Scanlines CRT */
+
+        #transportScreen::after {
+
+            content: "";
+
+            position: absolute;
+
+            inset: 0;
+
+            pointer-events: none;
+
+            background:
+                repeating-linear-gradient(
+                    to bottom,
+                    rgba(255,255,255,0.018) 0px,
+                    rgba(255,255,255,0.018) 1px,
+                    transparent 1px,
+                    transparent 4px
+                );
+
+            opacity: 0.45;
+
+        }
+
+
+        /* =========================================================
+           EN-TÊTE
+           ========================================================= */
+
+        .transportHeader {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            height: 72px;
+
+            border-bottom: 2px solid #f5a400;
+
+        }
+
+        .transportTitle {
+
+            font-size: 42px;
+
+            font-weight: bold;
+
+            letter-spacing: -2px;
+
+            text-transform: uppercase;
+
+        }
+
+        .transportClock {
+
+            font-size: 32px;
+
+            font-weight: bold;
+
+            white-space: nowrap;
+
+        }
+
+
+        /* =========================================================
+           GARE / DIRECTION
+           ========================================================= */
+
+        .transportStation {
+
+            display: flex;
+
+            align-items: baseline;
+
+            gap: 25px;
+
+            margin-top: 22px;
+
+            margin-bottom: 12px;
+
+        }
+
+        .stationLabel {
+
+            font-size: 21px;
+
+            text-transform: uppercase;
+
+        }
+
+        .stationName {
+
+            font-size: 38px;
+
+            font-weight: bold;
+
+        }
+
+        .direction {
+
+            margin-left: auto;
+
+            font-size: 23px;
+
+            text-transform: uppercase;
+
+        }
+
+
+        /* =========================================================
+           LISTE DES TRAINS
+           ========================================================= */
+
+        #departures {
+
+            display: flex;
+
+            flex-direction: column;
+
+        }
+
+
+        .departure {
+
+            display: grid;
+
+            grid-template-columns:
+                100px
+                minmax(250px, 1fr)
+                180px
+                75px;
+
+            align-items: center;
+
+            min-height: 112px;
+
+            border-top: 2px solid #f5a400;
+
+        }
+
+        .departure:last-child {
+
+            border-bottom: 2px solid #f5a400;
+
+        }
+
+
+        /* Icône RER */
+
+        .lineIcon {
+
+            width: 58px;
+            height: 58px;
+
+            border: 3px solid #f5a400;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            font-size: 27px;
+
+            font-weight: bold;
+
+        }
+
+
+        /* Destination */
+
+        .destination {
+
+            display: flex;
+
+            flex-direction: column;
+
+            min-width: 0;
+
+        }
+
+        .destinationName {
+
+            font-size: 33px;
+
+            font-weight: bold;
+
+            white-space: nowrap;
+
+            overflow: hidden;
+
+            text-overflow: ellipsis;
+
+        }
+
+        .trainInfo {
+
+            margin-top: 3px;
+
+            font-size: 20px;
+
+            white-space: nowrap;
+
+            overflow: hidden;
+
+            text-overflow: ellipsis;
+
+        }
+
+
+        /* Heure */
+
+        .departureTime {
+
+            font-size: 35px;
+
+            font-weight: bold;
+
+            text-align: right;
+
+        }
+
+
+        /* Voie */
+
+        .platform {
+
+            height: 62px;
+
+            width: 62px;
+
+            border: 3px solid #f5a400;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 30px;
+
+            font-weight: bold;
+
+            margin-left: auto;
+
+        }
+
+
+        /* =========================================================
+           BANDEAU INFORMATION
+           ========================================================= */
+
+        .transportFooter {
+
+            position: absolute;
+
+            left: 75px;
+
+            right: 75px;
+
+            bottom: 48px;
+
+            height: 65px;
+
+            display: flex;
+
+            align-items: center;
+
+            border-top: 2px solid #f5a400;
+
+            font-size: 22px;
+
+        }
+
+        .warning {
+
+            margin-right: 20px;
+
+            font-size: 28px;
+
+            font-weight: bold;
+
+        }
+
+        #transportMessage {
+
+            white-space: nowrap;
+
+            overflow: hidden;
+
+            text-overflow: ellipsis;
+
+        }
+
+
+        /* =========================================================
+           PETITS ÉCRANS
+           ========================================================= */
+
+        @media (max-width: 1000px) {
+
+            #transportScreen {
+
+                padding: 30px;
+
+            }
+
+            .departure {
+
+                grid-template-columns:
+                    70px
+                    minmax(150px, 1fr)
+                    120px
+                    55px;
+
+            }
+
+            .destinationName {
+
+                font-size: 24px;
+
+            }
+
+            .departureTime {
+
+                font-size: 27px;
+
+            }
+
+            .transportFooter {
+
+                left: 30px;
+                right: 30px;
+
+            }
+
+        }
+
+    </style>
+
 </head>
+
 
 <body>
 
+
 <div id="screen">
 
-    <!-- =====================================
-         BACKGROUND
-         ===================================== -->
 
-    <img
-        id="background"
-        src="images/background.png"
-        alt=""
+    <!-- =========================================================
+         ÉCRAN 1 : CASSANDRA
+         ========================================================= -->
+
+    <div
+        id="cassandraScreen"
+        class="appScreen"
     >
-    <div id="fish">
+
+
+        <!-- =====================================
+             BACKGROUND
+             ===================================== -->
 
         <img
-            id="fishImage"
-            src="images/fish/Fish1.png"
+            id="background"
+            src="images/background.png"
             alt=""
         >
+
+
+        <div id="fish">
+
+            <img
+                id="fishImage"
+                src="images/fish/Fish1.png"
+                alt=""
+            >
+
+        </div>
+
+
+        <!-- =====================================
+             CASSANDRA
+             ===================================== -->
+
+        <div id="cassandra">
+
+            <img
+                id="cassandraImage"
+                src="images/cassandraNormal.png"
+                alt="Cassandra"
+            >
+
+            <img
+                id="cassandraBody"
+                src="images/body/cassandraBody.png"
+                alt=""
+            >
+
+            <img
+                id="cassandraEyes"
+                src="images/eyes/Eyes1.png"
+                alt=""
+            >
+
+            <img
+                id="cassandraMouth"
+                src="images/mouth/Mouth1.png"
+                alt=""
+            >
+
+        </div>
+
+
+        <!-- =====================================
+             INFORMATIONS GAUCHE
+             ===================================== -->
+
+        <div id="leftInfo">
+
+            <div class="dataBlock">
+
+                <div class="label">
+                    HEURE
+                </div>
+
+                <div
+                    id="clock"
+                    class="value"
+                >
+                    00:00
+                </div>
+
+            </div>
+
+
+            <div class="dataBlock">
+
+                <div class="label">
+                    DATE
+                </div>
+
+                <div
+                    id="date"
+                    class="value small"
+                >
+                    ----
+                </div>
+
+            </div>
+
+
+            <div class="dataBlock">
+
+                <div class="label">
+                    TEMPÉRATURE
+                </div>
+
+                <div
+                    id="temperature"
+                    class="value"
+                >
+                    ----
+                </div>
+
+            </div>
+
+
+            <div class="dataBlock">
+
+                <div class="label">
+                    HUMIDITÉ
+                </div>
+
+                <div
+                    id="humidity"
+                    class="value"
+                >
+                    ----
+                </div>
+
+            </div>
+
+
+            <div class="dataBlock">
+
+                <div class="label">
+                    QUALITÉ AIR
+                </div>
+
+                <div
+                    id="airQuality"
+                    class="value small"
+                >
+                    ----
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================
+             INFORMATIONS DROITE
+             ===================================== -->
+
+        <div id="rightInfo">
+
+            <div class="dataBlock">
+
+                <div class="label">
+                    MÉTÉO
+                </div>
+
+                <div
+                    id="weather"
+                    class="value"
+                >
+                    ----
+                </div>
+
+            </div>
+
+
+            <div class="dataBlock">
+
+                <div class="label">
+                    CO₂
+                </div>
+
+                <div
+                    id="co2"
+                    class="value"
+                >
+                    ----
+                </div>
+
+            </div>
+
+
+            <div class="dataBlock">
+
+                <div class="label">
+                    LUMINOSITÉ
+                </div>
+
+                <div
+                    id="brightness"
+                    class="value"
+                >
+                    ----
+                </div>
+
+            </div>
+
+
+            <div class="dataBlock">
+
+                <div class="label">
+                    PORTE
+                </div>
+
+                <div
+                    id="door"
+                    class="value"
+                >
+                    ----
+                </div>
+
+            </div>
+
+
+            <div class="dataBlock">
+
+                <div class="label">
+                    MUSIQUE
+                </div>
+
+                <div
+                    id="music"
+                    class="value small"
+                >
+                    ----
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================
+             BROUILLARD GLOBAL
+             ===================================== -->
+
+        <div id="mist">
+
+            <img
+                id="mistImage"
+                src="images/mist/Mist9.png"
+                alt=""
+            >
+
+        </div>
+
 
     </div>
 
-    <!-- =====================================
-         CASSANDRA
-         ===================================== -->
 
-    <div id="cassandra">
+    <!-- =========================================================
+         ÉCRAN 2 : TRANSPORTS IDFM
+         ========================================================= -->
 
-        <!-- IMAGE FIXE -->
-
-        <img
-            id="cassandraImage"
-            src="images/cassandraNormal.png"
-            alt="Cassandra"
-        >
-
-        <!-- CORPS -->
-
-        <img
-            id="cassandraBody"
-            src="images/body/cassandraBody.png"
-            alt=""
-        >
-
-        <!-- YEUX -->
-
-        <img
-            id="cassandraEyes"
-            src="images/eyes/Eyes1.png"
-            alt=""
-        >
+    <div
+        id="transportScreen"
+        class="appScreen"
+    >
 
 
-        <!-- BOUCHE -->
+        <!-- EN-TÊTE -->
 
-        <img
-            id="cassandraMouth"
-            src="images/mouth/Mouth1.png"
-            alt=""
-        >
+        <div class="transportHeader">
 
-    </div>
-
-
-    <!-- =====================================
-         INFORMATIONS GAUCHE
-         ===================================== -->
-
-    <div id="leftInfo">
-
-        <div class="dataBlock">
-
-            <div class="label">
-                HEURE
+            <div class="transportTitle">
+                Prochains départs
             </div>
 
             <div
-                id="clock"
-                class="value"
+                id="transportClock"
+                class="transportClock"
             >
                 00:00
             </div>
@@ -98,180 +761,227 @@
         </div>
 
 
-        <div class="dataBlock">
+        <!-- GARE -->
 
-            <div class="label">
-                DATE
+        <div class="transportStation">
+
+            <div class="stationLabel">
+                Gare
             </div>
 
-            <div
-                id="date"
-                class="value small"
-            >
-                ----
+            <div class="stationName">
+                Sucy - Bonneuil
             </div>
 
-        </div>
-
-
-        <div class="dataBlock">
-
-            <div class="label">
-                TEMPÉRATURE
-            </div>
-
-            <div
-                id="temperature"
-                class="value"
-            >
-                ----
+            <div class="direction">
+                Direction Paris
             </div>
 
         </div>
 
 
-        <div class="dataBlock">
+        <!-- TRAINS -->
 
-            <div class="label">
-                HUMIDITÉ
+        <div id="departures">
+
+
+            <div class="departure">
+
+                <div class="lineIcon">
+                    A
+                </div>
+
+                <div class="destination">
+
+                    <div class="destinationName">
+                        Paris
+                    </div>
+
+                    <div class="trainInfo">
+                        RER A · Train en approche
+                    </div>
+
+                </div>
+
+                <div class="departureTime">
+                    --:--
+                </div>
+
+                <div class="platform">
+                    -
+                </div>
+
             </div>
 
-            <div
-                id="humidity"
-                class="value"
-            >
-                ----
+
+            <div class="departure">
+
+                <div class="lineIcon">
+                    A
+                </div>
+
+                <div class="destination">
+
+                    <div class="destinationName">
+                        Paris
+                    </div>
+
+                    <div class="trainInfo">
+                        RER A · Train
+                    </div>
+
+                </div>
+
+                <div class="departureTime">
+                    --:--
+                </div>
+
+                <div class="platform">
+                    -
+                </div>
+
             </div>
+
+
+            <div class="departure">
+
+                <div class="lineIcon">
+                    A
+                </div>
+
+                <div class="destination">
+
+                    <div class="destinationName">
+                        Paris
+                    </div>
+
+                    <div class="trainInfo">
+                        RER A · Train
+                    </div>
+
+                </div>
+
+                <div class="departureTime">
+                    --:--
+                </div>
+
+                <div class="platform">
+                    -
+                </div>
+
+            </div>
+
+
+            <div class="departure">
+
+                <div class="lineIcon">
+                    A
+                </div>
+
+                <div class="destination">
+
+                    <div class="destinationName">
+                        Paris
+                    </div>
+
+                    <div class="trainInfo">
+                        RER A · Train
+                    </div>
+
+                </div>
+
+                <div class="departureTime">
+                    --:--
+                </div>
+
+                <div class="platform">
+                    -
+                </div>
+
+            </div>
+
+
+            <div class="departure">
+
+                <div class="lineIcon">
+                    A
+                </div>
+
+                <div class="destination">
+
+                    <div class="destinationName">
+                        Paris
+                    </div>
+
+                    <div class="trainInfo">
+                        RER A · Train
+                    </div>
+
+                </div>
+
+                <div class="departureTime">
+                    --:--
+                </div>
+
+                <div class="platform">
+                    -
+                </div>
+
+            </div>
+
 
         </div>
 
 
-        <div class="dataBlock">
+        <!-- MESSAGE -->
 
-            <div class="label">
-                QUALITÉ AIR
+        <div class="transportFooter">
+
+            <div class="warning">
+                ⚠
             </div>
 
-            <div
-                id="airQuality"
-                class="value small"
-            >
-                ----
+            <div id="transportMessage">
+                Informations trafic — Données temps réel IDFM
             </div>
 
         </div>
+
 
     </div>
 
-
-    <!-- =====================================
-         INFORMATIONS DROITE
-         ===================================== -->
-
-    <div id="rightInfo">
-
-        <div class="dataBlock">
-
-            <div class="label">
-                MÉTÉO
-            </div>
-
-            <div
-                id="weather"
-                class="value"
-            >
-                ----
-            </div>
-
-        </div>
-
-
-        <div class="dataBlock">
-
-            <div class="label">
-                CO₂
-            </div>
-
-            <div
-                id="co2"
-                class="value"
-            >
-                ----
-            </div>
-
-        </div>
-
-
-        <div class="dataBlock">
-
-            <div class="label">
-                LUMINOSITÉ
-            </div>
-
-            <div
-                id="brightness"
-                class="value"
-            >
-                ----
-            </div>
-
-        </div>
-
-
-        <div class="dataBlock">
-
-            <div class="label">
-                PORTE
-            </div>
-
-            <div
-                id="door"
-                class="value"
-            >
-                ----
-            </div>
-
-        </div>
-
-
-        <div class="dataBlock">
-
-            <div class="label">
-                MUSIQUE
-            </div>
-
-            <div
-                id="music"
-                class="value small"
-            >
-                ----
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- =====================================
-         BROUILLARD GLOBAL
-         ===================================== -->
-
-    <div id="mist">
-
-        <img
-            id="mistImage"
-            src="images/mist/Mist9.png"
-            alt=""
-        >
-
-    </div>
 
 </div>
 
 
-<!-- =========================================
+<!-- =========================================================
+     SÉLECTEUR MANUEL
+     TEMPORAIRE
+     ========================================================= -->
+
+<div id="screenSelector">
+
+    <button
+        type="button"
+        id="screenButton1"
+        class="active"
+    >
+        1
+    </button>
+
+    <button
+        type="button"
+        id="screenButton2"
+    >
+        2
+    </button>
+
+</div>
+
+
+<!-- =========================================================
      JAVASCRIPT
-     ========================================= -->
+     ========================================================= -->
 
 <script src="js/config.js"></script>
 <script src="js/clock.js"></script>
@@ -285,6 +995,148 @@
 <script src="js/mist.js"></script>
 <script src="js/behavior.js"></script>
 <script src="app.js"></script>
+
+
+<script>
+
+    /* =========================================================
+       GESTION DES ÉCRANS
+       ========================================================= */
+
+    let currentScreen = 1;
+
+
+    function setScreen(screenNumber) {
+
+        screenNumber = Number(screenNumber);
+
+        if (![1, 2].includes(screenNumber)) {
+            screenNumber = 1;
+        }
+
+        currentScreen = screenNumber;
+
+
+        const cassandraScreen =
+            document.getElementById("cassandraScreen");
+
+        const transportScreen =
+            document.getElementById("transportScreen");
+
+        const button1 =
+            document.getElementById("screenButton1");
+
+        const button2 =
+            document.getElementById("screenButton2");
+
+
+        if (screenNumber === 1) {
+
+            cassandraScreen.style.display = "block";
+            transportScreen.style.display = "none";
+
+            button1.classList.add("active");
+            button2.classList.remove("active");
+
+        }
+
+
+        if (screenNumber === 2) {
+
+            cassandraScreen.style.display = "none";
+            transportScreen.style.display = "block";
+
+            button1.classList.remove("active");
+            button2.classList.add("active");
+
+        }
+
+    }
+
+
+    /* =========================================================
+       BOUTONS MANUELS
+       ========================================================= */
+
+    document
+        .getElementById("screenButton1")
+        .addEventListener("click", () => {
+
+            setScreen(1);
+
+        });
+
+
+    document
+        .getElementById("screenButton2")
+        .addEventListener("click", () => {
+
+            setScreen(2);
+
+        });
+
+
+    /* =========================================================
+       RACCOURCIS CLAVIER
+       
+       1 = Cassandra
+       2 = IDFM
+       ========================================================= */
+
+    document.addEventListener("keydown", (event) => {
+
+        if (event.key === "1") {
+
+            setScreen(1);
+
+        }
+
+        if (event.key === "2") {
+
+            setScreen(2);
+
+        }
+
+    });
+
+
+    /* =========================================================
+       HORLOGE ÉCRAN IDFM
+       ========================================================= */
+
+    function updateTransportClock() {
+
+        const now = new Date();
+
+        const hours =
+            String(now.getHours()).padStart(2, "0");
+
+        const minutes =
+            String(now.getMinutes()).padStart(2, "0");
+
+        const seconds =
+            String(now.getSeconds()).padStart(2, "0");
+
+
+        document.getElementById("transportClock").textContent =
+            `${hours}:${minutes}:${seconds}`;
+
+    }
+
+
+    updateTransportClock();
+
+    setInterval(updateTransportClock, 1000);
+
+
+    /* =========================================================
+       ÉCRAN PAR DÉFAUT
+       ========================================================= */
+
+    setScreen(1);
+
+</script>
+
 
 </body>
 
