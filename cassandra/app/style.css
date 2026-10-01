@@ -246,3 +246,18 @@ CASSANDRA
     object-fit: cover;
     object-position: center;
 }
+
+
+/* =========================================
+   COULEUR DU TEXTE
+   ========================================= */
+
+#screen,
+#cassandraScreen {
+    color: #e8eeee;
+}
+
+.label,
+.value {
+    color: inherit;
+}

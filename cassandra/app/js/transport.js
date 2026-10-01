@@ -1,238 +1,361 @@
-/* =========================================
-   ÉCRAN TRANSPORT
-   ========================================= */
+/* =========================================================
+   CASSANDRA — AFFICHAGE TRANSPORT
+   Style panneau SNCF / Aésys
+   ========================================================= */
 
-function updateTransportClock() {
-
-    var element =
-        document.getElementById(
-            "transportClock"
-        );
-
-    if (!element) {
-        return;
-    }
-
-    var now = new Date();
-
-    element.textContent =
-        String(now.getHours()).padStart(2, "0") +
-        ":" +
-        String(now.getMinutes()).padStart(2, "0") +
-        ":" +
-        String(now.getSeconds()).padStart(2, "0");
-}
-
-
-function formatDepartureTime(date) {
-
-    if (!(date instanceof Date)) {
-        date = new Date(date);
-    }
-
-    if (
-        isNaN(
-            date.getTime()
-        )
-    ) {
-        return "--:--";
-    }
-
-    return (
-        String(
-            date.getHours()
-        ).padStart(2, "0") +
-        ":" +
-        String(
-            date.getMinutes()
-        ).padStart(2, "0")
-    );
-}
-
-
-function departureStatusLabel(item) {
-
-    if (item.vehicleAtStop) {
-        return "Train à quai";
-    }
-
-    switch (
-        item.departureStatus
-    ) {
-
-        case "cancelled":
-            return "Train supprimé";
-
-        case "delayed":
-            return "Train retardé";
-
-        case "early":
-            return "Train en avance";
-
-        case "noReport":
-            return "Information indisponible";
-
-        default:
-            return "RER A · Train";
-    }
-}
-
-
-function updateTransportScreen(
-    departures
-) {
+function updateTransportScreen(departures) {
 
     var container =
-        document.getElementById(
-            "departures"
-        );
+        document.getElementById("departures");
 
     if (!container) {
         return;
     }
 
+
     container.innerHTML = "";
+
 
     if (
         !departures ||
-        departures.length === 0
+        !departures.length
     ) {
 
-        var empty =
-            document.createElement(
-                "div"
-            );
-
-        empty.className =
-            "transportEmpty";
-
-        empty.textContent =
-            "Aucun départ disponible";
-
-        container.appendChild(
-            empty
-        );
-
-        updateTransportMessage(
-            "Données temps réel IDFM — aucun départ disponible"
-        );
+        container.innerHTML =
+            '<div class="noDeparture">' +
+            'AUCUN DÉPART DISPONIBLE' +
+            '</div>';
 
         return;
     }
 
-    departures.forEach(
-        function(departure) {
 
-            var row =
-                document.createElement(
-                    "div"
-                );
+    for (
+        var i = 0;
+        i < departures.length;
+        i++
+    ) {
 
-            row.className =
-                "departure";
-
-
-            var line =
-                document.createElement(
-                    "div"
-                );
-
-            line.className =
-                "lineIcon";
-
-            line.textContent =
-                departure.line || "A";
+        container.appendChild(
+            createDepartureRow(
+                departures[i]
+            )
+        );
+    }
 
 
-            var destination =
-                document.createElement(
-                    "div"
-                );
-
-            destination.className =
-                "destination";
+    refreshTransportCountdowns();
+}
 
 
-            var destinationName =
-                document.createElement(
-                    "div"
-                );
+function createDepartureRow(departure) {
 
-            destinationName.className =
-                "destinationName";
+    var row =
+        document.createElement("div");
 
-            destinationName.textContent =
-                departure.destination ||
-                "Paris";
+    row.className = "departure";
 
 
-            var trainInfo =
-                document.createElement(
-                    "div"
-                );
-
-            trainInfo.className =
-                "trainInfo";
-
-            trainInfo.textContent =
-                departureStatusLabel(
-                    departure
-                );
-
-
-            destination.appendChild(
-                destinationName
-            );
-
-            destination.appendChild(
-                trainInfo
-            );
-
-
-            var time =
-                document.createElement(
-                    "div"
-                );
-
-            time.className =
-                "departureTime";
-
-            time.textContent =
-                formatDepartureTime(
-                    departure.departure
-                );
-
-
-            var platform =
-                document.createElement(
-                    "div"
-                );
-
-            platform.className =
-                "platform";
-
-            platform.textContent =
-                departure.platform || "-";
-
-
-            row.appendChild(line);
-            row.appendChild(destination);
-            row.appendChild(time);
-            row.appendChild(platform);
-
-            container.appendChild(
-                row
-            );
-        }
+    row.setAttribute(
+        "data-departure",
+        departure.departure.toISOString()
     );
 
-    updateTransportMessage(
-        "Informations trafic — Données temps réel IDFM"
+
+    /* =========================================
+       LOGO RER A
+       ========================================= */
+
+    var line =
+        document.createElement("div");
+
+    line.className = "lineIcon";
+
+    line.textContent =
+        departure.line || "A";
+
+
+    /* =========================================
+       DESTINATION + MISSION + TYPE + STATUT
+       ========================================= */
+
+    var destination =
+        document.createElement("div");
+
+    destination.className =
+        "destination";
+
+
+    var destinationName =
+        document.createElement("div");
+
+    destinationName.className =
+        "destinationName";
+
+    destinationName.textContent =
+        formatDestination(
+            departure.destination
+        );
+
+
+    var trainInfo =
+        document.createElement("div");
+
+    trainInfo.className =
+        "trainInfo";
+
+
+    var mission =
+        departure.mission ||
+        "—";
+
+
+    var trainType =
+        departure.trainType ||
+        "Train";
+
+
+    var status =
+        departure.statusLabel ||
+        "À L'HEURE";
+
+
+    trainInfo.textContent =
+        mission +
+        " · " +
+        trainType +
+        " · " +
+        status;
+
+
+    destination.appendChild(
+        destinationName
+    );
+
+    destination.appendChild(
+        trainInfo
+    );
+
+
+    /* =========================================
+       HEURE
+       ========================================= */
+
+    var time =
+        document.createElement("div");
+
+    time.className =
+        "departureTime";
+
+
+    time.textContent =
+        formatTimeRemaining(
+            departure.departure
+        );
+
+
+    /* =========================================
+       VOIE
+       ========================================= */
+
+    var platform =
+        document.createElement("div");
+
+    platform.className =
+        "platform";
+
+
+    platform.textContent =
+        departure.platform ||
+        "-";
+
+
+    row.appendChild(line);
+    row.appendChild(destination);
+    row.appendChild(time);
+    row.appendChild(platform);
+
+
+    return row;
+}
+
+
+/* =========================================================
+   DESTINATION
+   ========================================================= */
+
+function formatDestination(destination) {
+
+    if (!destination) {
+        return "Paris";
+    }
+
+    return String(destination)
+        .replace(
+            /-/g,
+            "-"
+        )
+        .toUpperCase();
+}
+
+
+/* =========================================================
+   HEURE
+   ========================================================= */
+
+function formatClockTime(date) {
+
+    var hours =
+        String(
+            date.getHours()
+        ).padStart(2, "0");
+
+    var minutes =
+        String(
+            date.getMinutes()
+        ).padStart(2, "0");
+
+
+    return (
+        hours +
+        ":" +
+        minutes
     );
 }
 
 
-function updateTransportMessage(
+/* =========================================================
+   TEMPS RESTANT
+   ========================================================= */
+
+function formatTimeRemaining(date) {
+
+    var now =
+        Date.now();
+
+    var difference =
+        date.getTime() -
+        now;
+
+
+    if (difference <= 60000) {
+        return "À L'APPROCHE";
+    }
+
+
+    var minutes =
+        Math.floor(
+            difference / 60000
+        );
+
+
+    if (minutes < 60) {
+
+        return (
+            minutes +
+            " min"
+        );
+    }
+
+
+    return formatClockTime(
+        date
+    );
+}
+
+
+/* =========================================================
+   RAFRAÎCHISSEMENT DU COMPTE À REBOURS
+   ========================================================= */
+
+function refreshTransportCountdowns() {
+
+    var rows =
+        document.querySelectorAll(
+            ".departure[data-departure]"
+        );
+
+
+    for (
+        var i = 0;
+        i < rows.length;
+        i++
+    ) {
+
+        var date =
+            new Date(
+                rows[i].getAttribute(
+                    "data-departure"
+                )
+            );
+
+
+        var time =
+            rows[i].querySelector(
+                ".departureTime"
+            );
+
+
+        if (time) {
+
+            time.textContent =
+                formatTimeRemaining(
+                    date
+                );
+        }
+    }
+}
+
+
+setInterval(
+    refreshTransportCountdowns,
+    1000
+);
+
+
+/* =========================================================
+   INFORMATION TRAFIC
+   ========================================================= */
+
+function updateTransportTraffic(traffic) {
+
+    var message =
+        "INFORMATION TRAFIC · TRAFIC NORMAL";
+
+    var state = "normal";
+
+    if (traffic && traffic.length) {
+
+        var first = traffic[0];
+
+        message =
+            "INFORMATION TRAFIC · " +
+            (first.message || "RER A perturbé");
+
+        state = "incident";
+    }
+
+    setTransportTrafficState(
+        state,
+        message
+    );
+
+    /*
+       Les perturbations secondaires restent disponibles
+       dans la console pour diagnostic, mais Cassandra
+       affiche en priorité la plus importante.
+    */
+    if (traffic && traffic.length > 1) {
+        console.info(
+            "[TRANSPORT] Autres perturbations :",
+            traffic.slice(1)
+        );
+    }
+}
+
+
+function setTransportTrafficState(
+    state,
     message
 ) {
 
@@ -241,46 +364,84 @@ function updateTransportMessage(
             "transportMessage"
         );
 
-    if (!element) {
-        return;
+    var icon =
+        document.querySelector(
+            ".warning"
+        );
+
+    if (element) {
+        element.textContent = message;
     }
 
-    element.textContent =
-        message;
+    if (icon) {
+        icon.className =
+            "warning " +
+            state;
+
+        icon.textContent =
+            state === "incident"
+                ? "⚠"
+                : "●";
+    }
 }
 
 
-function updateTransportError(
-    error
-) {
-
-    var message =
-        "Connexion IDFM indisponible";
-
-    if (
-        error === "HTTP_401" ||
-        error === "HTTP_403"
-    ) {
-        message =
-            "Accès API IDFM refusé — vérifier la clé PRIM";
-    }
-
-    if (error === "HTTP_429") {
-        message =
-            "Quota API IDFM atteint";
-    }
-
-    if (error === "NETWORK_ERROR") {
-        message =
-            "Réseau / CORS — API IDFM inaccessible";
-    }
-
-    updateTransportMessage(
-        message
-    );
+function updateTransportTrafficError(error) {
 
     console.error(
-        "[TRANSPORT]",
+        "[TRANSPORT] Informations trafic indisponibles :",
         error
+    );
+
+    setTransportTrafficState(
+        "unknown",
+        "INFORMATION TRAFIC · DONNÉES INDISPONIBLES"
+    );
+}
+
+
+/* =========================================================
+   ERREURS DÉPARTS
+   ========================================================= */
+
+function updateTransportError(error) {
+
+    var message =
+        "DONNÉES IDFM INDISPONIBLES";
+
+    if (error === "NO_API_KEY") {
+        message =
+            "CLÉ API IDFM MANQUANTE";
+    }
+    else if (
+        error === "NETWORK_ERROR"
+    ) {
+        message =
+            "ERREUR RÉSEAU IDFM";
+    }
+    else if (
+        error === "TIMEOUT"
+    ) {
+        message =
+            "DÉLAI D'ATTENTE IDFM";
+    }
+    else if (
+        String(error).indexOf("HTTP_") === 0
+    ) {
+        message =
+            "ERREUR IDFM " +
+            String(error).replace(
+                "HTTP_",
+                ""
+            );
+    }
+
+    /*
+       Une erreur sur les départs ne doit pas écraser
+       une information trafic valide déjà affichée.
+    */
+    console.error(
+        "[TRANSPORT]",
+        message
     );
 }

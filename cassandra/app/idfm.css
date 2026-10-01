@@ -1,382 +1,644 @@
+/* =========================================================
+   ÉCRAN 2 — TRANSPORTS IDFM
+   STYLE PANNEAU SNCF / AÉSYS
+   ========================================================= */
+
 #transportScreen {
+    display: block;
 
-            position: absolute;
+    position: absolute;
 
-            inset: 0;
+    left: 0;
+    top: 0;
 
-            box-sizing: border-box;
-
-            padding: 55px 75px;
-
-            background:
-
-                radial-gradient(
-                    ellipse at center,
-                    rgba(255, 170, 0, 0.025) 0%,
-                    rgba(0, 0, 0, 0) 70%
-                ),
-
-                #050608;
-
-        }
-
-
-        /* Scanlines CRT */
-
-        #transportScreen::after {
-
-            content: "";
-
-            position: absolute;
-
-            inset: 0;
-
-            pointer-events: none;
-
-            background:
-                repeating-linear-gradient(
-                    to bottom,
-                    rgba(255,255,255,0.018) 0px,
-                    rgba(255,255,255,0.018) 1px,
-                    transparent 1px,
-                    transparent 4px
-                );
-
-            opacity: 0.45;
-
-        }
-
-
-        /* =========================================================
-           EN-TÊTE
-           ========================================================= */
-
-        .transportHeader {
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: space-between;
-
-            height: 72px;
-
-            border-bottom: 2px solid #f5a400;
-
-        }
-
-        .transportTitle {
-
-            font-size: 42px;
-
-            font-weight: bold;
-
-            letter-spacing: -2px;
-
-            text-transform: uppercase;
-
-        }
-
-        .transportClock {
-
-            font-size: 32px;
-
-            font-weight: bold;
-
-            white-space: nowrap;
-
-        }
-
-
-        /* =========================================================
-           GARE / DIRECTION
-           ========================================================= */
-
-        .transportStation {
-
-            display: flex;
-
-            align-items: baseline;
-
-            gap: 25px;
-
-            margin-top: 22px;
-
-            margin-bottom: 12px;
-
-        }
-
-        .stationLabel {
-
-            font-size: 21px;
-
-            text-transform: uppercase;
-
-        }
-
-        .stationName {
-
-            font-size: 38px;
-
-            font-weight: bold;
-
-        }
-
-        .direction {
-
-            margin-left: auto;
-
-            font-size: 23px;
-
-            text-transform: uppercase;
-
-        }
-
-
-        /* =========================================================
-           LISTE DES TRAINS
-           ========================================================= */
-
-        #departures {
-
-            display: flex;
-
-            flex-direction: column;
-
-        }
-
-
-        .departure {
-
-            display: grid;
-
-            grid-template-columns:
-                100px
-                minmax(250px, 1fr)
-                180px
-                75px;
-
-            align-items: center;
-
-            min-height: 112px;
-
-            border-top: 2px solid #f5a400;
-
-        }
-
-        .departure:last-child {
-
-            border-bottom: 2px solid #f5a400;
-
-        }
-
-
-        /* Icône RER */
-
-        .lineIcon {
-
-            width: 58px;
-            height: 58px;
-
-            border: 3px solid #f5a400;
-
-            display: flex;
-
-            align-items: center;
-            justify-content: center;
-
-            font-size: 27px;
-
-            font-weight: bold;
-
-        }
-
-
-        /* Destination */
-
-        .destination {
-
-            display: flex;
-
-            flex-direction: column;
-
-            min-width: 0;
-
-        }
-
-        .destinationName {
-
-            font-size: 33px;
-
-            font-weight: bold;
-
-            white-space: nowrap;
-
-            overflow: hidden;
-
-            text-overflow: ellipsis;
-
-        }
-
-        .trainInfo {
-
-            margin-top: 3px;
-
-            font-size: 20px;
-
-            white-space: nowrap;
-
-            overflow: hidden;
-
-            text-overflow: ellipsis;
-
-        }
-
-
-        /* Heure */
-
-        .departureTime {
-
-            font-size: 35px;
-
-            font-weight: bold;
-
-            text-align: right;
-
-        }
-
-
-        /* Voie */
-
-        .platform {
-
-            height: 62px;
-
-            width: 62px;
-
-            border: 3px solid #f5a400;
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            font-size: 30px;
-
-            font-weight: bold;
-
-            margin-left: auto;
-
-        }
-
-
-        /* =========================================================
-           BANDEAU INFORMATION
-           ========================================================= */
-
-        .transportFooter {
-
-            position: absolute;
-
-            left: 75px;
-
-            right: 75px;
-
-            bottom: 48px;
-
-            height: 65px;
-
-            display: flex;
-
-            align-items: center;
-
-            border-top: 2px solid #f5a400;
-
-            font-size: 22px;
-
-        }
-
-        .warning {
-
-            margin-right: 20px;
-
-            font-size: 28px;
-
-            font-weight: bold;
-
-        }
-
-        #transportMessage {
-
-            white-space: nowrap;
-
-            overflow: hidden;
-
-            text-overflow: ellipsis;
-
-        }
-
-
-        /* =========================================================
-           PETITS ÉCRANS
-           ========================================================= */
-
-        @media (max-width: 1000px) {
-
-            #transportScreen {
-
-                padding: 30px;
-
-            }
-
-            .departure {
-
-                grid-template-columns:
-                    70px
-                    minmax(150px, 1fr)
-                    120px
-                    55px;
-
-            }
-
-            .destinationName {
-
-                font-size: 24px;
-
-            }
-
-            .departureTime {
-
-                font-size: 27px;
-
-            }
-
-            .transportFooter {
-
-                left: 30px;
-                right: 30px;
-
-            }
-
-        }
-
-html, body {
-    margin: 0;
-    padding: 0;
     width: 100%;
     height: 100%;
+
+    box-sizing: border-box;
+
+    padding: 20px 48px 16px 48px;
+
     overflow: hidden;
+
     background: #050608;
+
+    color: #f5a400;
+
+    font-family: "Dot Matrix", monospace;
 }
 
-.transportEmpty {
-    min-height: 500px;
+
+#transportScreen,
+#transportScreen * {
+    color: #f5a400;
+}
+
+
+/* =========================================================
+   SCANLINES
+   ========================================================= */
+
+#transportScreen::after {
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    z-index: 100;
+
+    background:
+        repeating-linear-gradient(
+            to bottom,
+            rgba(255,255,255,0.018) 0px,
+            rgba(255,255,255,0.018) 1px,
+            transparent 1px,
+            transparent 4px
+        );
+
+    opacity: 0.32;
+}
+
+
+/* =========================================================
+   EN-TÊTE
+   ========================================================= */
+
+.transportHeader {
+    position: relative;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    width: 100%;
+
+    height: 42px;
+
+    box-sizing: border-box;
+
+    border-bottom: 2px solid #f5a400;
+
+    z-index: 2;
+}
+
+
+.transportTitle {
+    font-size: 31px;
+
+    line-height: 1;
+
+    font-weight: bold;
+
+    letter-spacing: -2px;
+
+    text-transform: none;
+}
+
+
+.transportClock {
+    font-size: 25px;
+
+    line-height: 1;
+
+    font-weight: bold;
+
+    white-space: nowrap;
+
+    letter-spacing: 1px;
+}
+
+
+/* =========================================================
+   GARE / DIRECTION
+   ========================================================= */
+
+.transportStation {
+    position: relative;
+
+    display: flex;
+
+    align-items: center;
+
+    width: 100%;
+
+    height: 66px;
+
+    box-sizing: border-box;
+
+    z-index: 2;
+
+    border-bottom: 2px solid #f5a400;
+}
+
+
+.stationLabel {
+    font-size: 16px;
+
+    text-transform: uppercase;
+
+    opacity: 0.75;
+
+    margin-right: 20px;
+}
+
+
+.stationName {
+    font-size: 28px;
+
+    line-height: 1;
+
+    font-weight: bold;
+
+    letter-spacing: -1px;
+}
+
+
+.direction {
+    margin-left: auto;
+
+    font-size: 17px;
+
+    line-height: 1;
+
+    text-transform: uppercase;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   LISTE
+   ========================================================= */
+
+#departures {
+    position: relative;
+
+    display: flex;
+
+    flex-direction: column;
+
+    width: 100%;
+
+    z-index: 2;
+}
+
+
+/* =========================================================
+   LIGNE DE DÉPART
+   ========================================================= */
+
+.departure {
+    position: relative;
+
+    display: grid;
+
+    grid-template-columns:
+        58px
+        minmax(0, 1fr)
+        195px
+        52px;
+
+    align-items: center;
+
+    width: 100%;
+
+    height: 82px;
+
+    min-height: 82px;
+
+    box-sizing: border-box;
+
+    border-bottom: none;
+
+    padding: 5px 0;
+}
+
+/*
+   Séparation façon afficheur Aésys :
+   la ligne horizontale s'arrête au bord gauche
+   du carré de voie. Le bord gauche du carré
+   prolonge visuellement la séparation vers le haut.
+*/
+.departure::after {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    right: 52px;
+    bottom: 0;
+
+    height: 2px;
+
+    background: #f5a400;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   LOGO LIGNE
+   ========================================================= */
+
+.lineIcon {
+    width: 43px;
+    height: 43px;
+
+    box-sizing: border-box;
+
+    border: 2px solid #f5a400;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    font-size: 22px;
+
+    line-height: 1;
+
+    font-weight: bold;
+}
+
+
+/* =========================================================
+   DESTINATION
+   ========================================================= */
+
+.destination {
+    min-width: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    overflow: hidden;
+
+    padding-left: 4px;
+
+    padding-right: 12px;
+}
+
+
+.destinationName {
+    font-size: 25px;
+
+    line-height: 25px;
+
+    font-weight: bold;
+
+    letter-spacing: -1px;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+.trainInfo {
+    margin-top: 4px;
+
+    font-size: 15px;
+
+    line-height: 16px;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    opacity: 0.95;
+}
+
+
+/* =========================================================
+   HEURE
+   ========================================================= */
+
+.departureTime {
+    position: relative;
+    /* height : 75px; */
+
+    font-size: 24px;
+
+    line-height: 1;
+
+    font-weight: bold;
+
+    text-align: right;
+
+    white-space: nowrap;
+
+    padding-right: 12px;
+}
+
+
+/* Petit retour vertical 
+
+.departureTime::after {
+    content: "";
+
+    position: absolute;
+
+    right: 0;
+
+    bottom: 0;
+
+    width: 2px;
+
+    height: 50%;
+
+    background: #f5a400;
+}*/
+
+
+/* =========================================================
+   VOIE
+   ========================================================= */
+
+.platform {
+    width: 44px;
+    height: 44px;
+    border: 2px solid #f5a400;
+
     display: flex;
     align-items: center;
     justify-content: center;
-    border-top: 2px solid #f5a400;
-    border-bottom: 2px solid #f5a400;
-    font-size: 28px;
+
+    font-size: 23px;
     font-weight: bold;
+
+    position: relative;
+}
+
+.platform::after {
+    content: "";
+    position: absolute;
+    left: -2px;
+    top: 100%;
+    height: 19px;
+    border-left: 2px solid #f5a400;
+}
+
+
+/* =========================================================
+   AUCUN DÉPART
+   ========================================================= */
+
+.noDeparture {
+    height: 82px;
+
+    display: flex;
+
+    align-items: center;
+
+    font-size: 20px;
+
+    font-weight: bold;
+
+    border-bottom: 2px solid #f5a400;
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.transportFooter {
+    position: absolute;
+
+    left: 48px;
+    right: 48px;
+
+    bottom: 16px;
+
+    height: 33px;
+
+    box-sizing: border-box;
+
+    display: flex;
+
+    align-items: center;
+
+    border-top: 2px solid #f5a400;
+
+    z-index: 2;
+
+    font-size: 15px;
+}
+
+
+.warning {
+    margin-right: 10px;
+
+    width: 18px;
+
+    flex: 0 0 18px;
+
+    font-size: 14px;
+
+    font-weight: bold;
+
+    text-align: center;
+}
+
+
+.warning.normal {
+    font-size: 10px;
+}
+
+
+.warning.incident {
+    font-size: 20px;
+}
+
+
+.warning.unknown {
+    font-size: 10px;
+}
+
+
+#transportMessage {
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+/* =========================================================
+   PETITS ÉCRANS
+   ========================================================= */
+
+@media (max-width: 1000px) {
+
+    #transportScreen {
+        padding: 16px 30px 14px 30px;
+    }
+
+
+    .transportTitle {
+        font-size: 27px;
+    }
+
+
+    .transportClock {
+        font-size: 22px;
+    }
+
+
+    .transportStation {
+        height: 58px;
+    }
+
+
+    .stationName {
+        font-size: 23px;
+    }
+
+
+    .stationLabel {
+        font-size: 14px;
+    }
+
+
+    .direction {
+        font-size: 15px;
+    }
+
+
+    /* =========================================================
+   LIGNE DE DÉPART
+   ========================================================= */
+
+    .departure {
+        position: relative;
+
+        display: grid;
+
+        grid-template-columns:
+            58px
+            minmax(0, 1fr)
+            auto
+            52px;
+
+        align-items: center;
+
+        width: 100%;
+
+        height: 82px;
+        min-height: 82px;
+
+        box-sizing: border-box;
+
+        padding: 5px 0;
+    }
+
+
+    /* Ligne horizontale */
+
+    .departure::after {
+        content: "";
+
+        position: absolute;
+
+        left: 0;
+        right: 52px;
+
+        bottom: 15px;
+
+        height: 2px;
+
+        background: #f5a400;
+
+        pointer-events: none;
+    }
+
+
+    .lineIcon {
+        width: 38px;
+        height: 38px;
+
+        font-size: 20px;
+    }
+
+
+    .destinationName {
+        font-size: 20px;
+        line-height: 21px;
+    }
+
+
+    .trainInfo {
+        font-size: 12px;
+        line-height: 14px;
+    }
+
+
+    /* =========================================================
+   HEURE
+   ========================================================= */
+
+    .departureTime {
+        font-size: 24px;
+
+        line-height: 1;
+
+        font-weight: bold;
+
+        text-align: right;
+
+        white-space: nowrap;
+
+        padding: 0 12px 0 8px;
+
+        justify-self: end;
+    }
+
+
+    .departure::after {
+        right: 45px;
+    }
+
+
+    /* =========================================================
+   VOIE
+   ========================================================= */
+
+    /* .platform {
+        width: 52px;
+        height: 52px;
+
+        /* box-sizing: border-box; 
+
+        border: 2px solid #f5a400;
+
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+
+        margin: 0;
+
+        font-size: 23px;
+        line-height: 1;
+        font-weight: bold;
+    } */
+
+
+    .transportFooter {
+        left: 30px;
+        right: 30px;
+    }
 }
