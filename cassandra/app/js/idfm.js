@@ -521,6 +521,45 @@ var idfm = {
        TEXTE À AFFICHER
        ========================================================= */
 
+    cleanTrafficHTML: function(value) {
+
+        var html = String(value || "");
+
+        /*
+        On transforme les retours HTML en espaces avant de
+        supprimer les balises, afin d'éviter que deux mots
+        se retrouvent collés.
+        */
+
+        html = html
+            .replace(/<br\s*\/?>/gi, " ")
+            .replace(/<\/p\s*>/gi, " ")
+            .replace(/<p(?:\s[^>]*)?>/gi, " ")
+            .replace(/<div(?:\s[^>]*)?>/gi, " ")
+            .replace(/<\/div\s*>/gi, " ");
+
+        /*
+        Décodage des entités HTML (&eacute;, &#233;, ...).
+        */
+
+        var decoder = document.createElement("textarea");
+
+        decoder.innerHTML = html;
+
+        var decoded = decoder.value || html;
+
+        /*
+        Suppression de toutes les balises restantes.
+        */
+
+        decoded = decoded.replace(/<[^>]*>/g, " ");
+
+        return decoded
+            .replace(/\s+/g, " ")
+            .trim();
+    },
+
+
     getTrafficText: function(disruption) {
 
         var messages =
@@ -572,11 +611,11 @@ var idfm = {
             firstMessage;
 
         /*
-           Nettoyage léger des espaces insérés par IDFM.
+           IDFM peut renvoyer du HTML (p, br, etc.) et des entités
+           HTML (&eacute;, &#233;, ...). Cassandra doit afficher
+           uniquement du texte propre.
         */
-        return result
-            .replace(/\\s+/g, " ")
-            .trim();
+        return this.cleanTrafficHTML(result);
     },
 
 

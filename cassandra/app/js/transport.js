@@ -378,10 +378,11 @@ function setTransportTrafficState(
             "warning " +
             state;
 
-        icon.textContent =
-            state === "incident"
-                ? "⚠"
-                : "●";
+        /*
+           La rubalise est désormais dessinée en CSS.
+           Aucun caractère d'alerte n'est nécessaire ici.
+        */
+        icon.textContent = "";
     }
 }
 
